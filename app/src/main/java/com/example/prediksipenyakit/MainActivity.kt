@@ -3,15 +3,23 @@ package com.example.prediksipenyakit
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.RadioGroup
 import android.widget.Toast
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import android.widget.RadioGroup
-import android.widget.ImageView
+import ai.onnxruntime.OnnxTensor
+import ai.onnxruntime.OrtEnvironment
+import ai.onnxruntime.OrtSession
+import java.io.File
+import java.io.FileOutputStream
+import java.nio.FloatBuffer
+import java.util.Collections
 
 class MainActivity : AppCompatActivity() {
 
+    // UI Components
     private lateinit var etBMI: TextInputEditText
     private lateinit var etAge: TextInputEditText
     private lateinit var etGender: AutoCompleteTextView
@@ -28,13 +36,23 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnSubmit: MaterialButton
     private lateinit var btnBack: ImageView
 
+    // ONNX Components
+    private lateinit var ortEnv: OrtEnvironment
+    private lateinit var session: OrtSession
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         initViews()
         setupGenderDropdown()
-        setupListeners()
+
+        // Inisialisasi ONNX Runtime
+        initONNX()
+
+        btnSubmit.setOnClickListener {
+            performPrediction()
+        }
     }
 
     private fun initViews() {
@@ -56,154 +74,120 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupGenderDropdown() {
-        val genders = arrayOf("Laki-laki", "Perempuan")
-        val adapter = ArrayAdapter(
-            this,
-            android.R.layout.simple_dropdown_item_1line,
-            genders
-        )
+        // Pastikan opsi ini sesuai dengan LabelEncoder di Python
+        val genders = arrayOf("Male", "Female")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, genders)
         etGender.setAdapter(adapter)
     }
 
-    private fun setupListeners() {
-        btnBack.setOnClickListener { finish() }
-        btnSubmit.setOnClickListener {
-            if (validateInputs()) {
-                submitData()
+    private fun initONNX() {
+        try {
+            ortEnv = OrtEnvironment.getEnvironment()
+            // Pastikan nama file .onnx di folder assets SAMA PERSIS dengan string ini
+            val modelFile = File(filesDir, "lgbm_model_smote.onnx")
+            copyAssetToInternalStorage("lgbm_model_smote.onnx", modelFile)
+
+            session = ortEnv.createSession(modelFile.absolutePath, OrtSession.SessionOptions())
+        } catch (e: Exception) {
+            Toast.makeText(this, "Gagal memuat model: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace()
+        }
+    }
+
+    private fun performPrediction() {
+        try {
+            // --- 1. Ambil Data dari Input UI ---
+            val age = etAge.text.toString().toFloatOrNull() ?: 0f
+
+            // Gender Mapping (Sesuaikan dengan Python: Male=1/0?)
+            val genderStr = etGender.text.toString()
+            val gender = if (genderStr.equals("Male", ignoreCase = true)) 1f else 0f
+
+            val bmi = etBMI.text.toString().toFloatOrNull() ?: 0f
+            val dailySteps = etDailySteps.text.toString().toFloatOrNull() ?: 0f
+            val sleepHours = etSleepHours.text.toString().toFloatOrNull() ?: 0f
+            val waterIntake = etWaterIntake.text.toString().toFloatOrNull() ?: 0f
+            val calories = etCalories.text.toString().toFloatOrNull() ?: 0f
+
+            // Radio Button (1 = Ya, 0 = Tidak)
+            val smoker = if (rgSmoker.checkedRadioButtonId == R.id.rbSmokerYes) 1f else 0f
+            val alcohol = if (rgAlcohol.checkedRadioButtonId == R.id.rbAlcoholYes) 1f else 0f
+
+            val heartRate = etHeartRate.text.toString().toFloatOrNull() ?: 0f
+            val systolic = etSystolic.text.toString().toFloatOrNull() ?: 0f
+            val diastolic = etDiastolic.text.toString().toFloatOrNull() ?: 0f
+            val cholesterol = etCholesterol.text.toString().toFloatOrNull() ?: 0f
+
+            // [PENTING] Fitur Family History tidak ada di UI XML Anda.
+            // Saya set default 0.0 (Tidak ada riwayat).
+            // TODO: Tambahkan Checkbox di XML untuk input riwayat keluarga yang benar.
+            val familyHistory = 0f
+
+
+            // --- 2. Buat Array Input (Urutan HARUS SAMA PERSIS dengan Python) ---
+            // Urutan Python: ['age', 'gender', 'bmi', 'daily_steps', 'sleep_hours', 'water_intake_l',
+            // 'calories_consumed', 'smoker', 'alcohol', 'resting_hr', 'systolic_bp',
+            // 'diastolic_bp', 'cholesterol', 'family_history']
+
+            val inputArray = floatArrayOf(
+                age,            // 1
+                gender,         // 2
+                bmi,            // 3
+                dailySteps,     // 4
+                sleepHours,     // 5
+                waterIntake,    // 6
+                calories,       // 7
+                smoker,         // 8
+                alcohol,        // 9
+                heartRate,      // 10 (resting_hr)
+                systolic,       // 11
+                diastolic,      // 12
+                cholesterol,    // 13
+                familyHistory   // 14
+            )
+
+            // --- 3. Buat Tensor ONNX ---
+            val shape = longArrayOf(1, 14) // Ukuran [1 baris, 14 kolom]
+            val buffer = FloatBuffer.wrap(inputArray)
+            val inputTensor = OnnxTensor.createTensor(ortEnv, buffer, shape)
+
+            // --- 4. Jalankan Prediksi ---
+            // "float_input" adalah nama input tensor saat convert di Python.
+            val results = session.run(Collections.singletonMap("float_input", inputTensor))
+
+            // --- 5. Ambil Output ---
+            // Output index 0 biasanya adalah LABEL (Hasil prediksi kelas)
+            val outputTensor = results[0]
+            val resultValue = outputTensor.value as LongArray // LightGBM biasanya output Long (Int64)
+            val predictionClass = resultValue[0]
+
+            // Tampilkan Hasil
+            val pesan = if (predictionClass == 1L) "Prediksi: BERISIKO (1)" else "Prediksi: AMAN (0)"
+            Toast.makeText(this, pesan, Toast.LENGTH_LONG).show()
+
+            // Bersihkan memori
+            inputTensor.close()
+            results.close()
+
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error Prediksi: ${e.message}", Toast.LENGTH_LONG).show()
+            e.printStackTrace() // Cek Logcat untuk detail merahnya
+        }
+    }
+
+    private fun copyAssetToInternalStorage(fileName: String, outputFile: File) {
+        if (!outputFile.exists()) {
+            assets.open(fileName).use { inputStream ->
+                FileOutputStream(outputFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
             }
         }
     }
 
-    private fun validateInputs(): Boolean {
-        // Validate BMI
-        if (etBMI.text.isNullOrEmpty()) {
-            etBMI.error = "BMI harus diisi"
-            etBMI.requestFocus()
-            return false
-        }
-
-        // Validate Age
-        if (etAge.text.isNullOrEmpty()) {
-            etAge.error = "Umur harus diisi"
-            etAge.requestFocus()
-            return false
-        }
-
-        // Validate Gender
-        if (etGender.text.isNullOrEmpty()) {
-            etGender.error = "Gender harus dipilih"
-            etGender.requestFocus()
-            return false
-        }
-
-        // Validate Daily Steps
-        if (etDailySteps.text.isNullOrEmpty()) {
-            etDailySteps.error = "Langkah harian harus diisi"
-            etDailySteps.requestFocus()
-            return false
-        }
-
-        // Validate Sleep Hours
-        if (etSleepHours.text.isNullOrEmpty()) {
-            etSleepHours.error = "Jam tidur harus diisi"
-            etSleepHours.requestFocus()
-            return false
-        }
-
-        // Validate Smoker
-        if (rgSmoker.checkedRadioButtonId == -1) {
-            Toast.makeText(this, "Pilih status perokok", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        // Validate Alcohol
-        if (rgAlcohol.checkedRadioButtonId == -1) {
-            Toast.makeText(this, "Pilih status konsumsi alkohol", Toast.LENGTH_SHORT).show()
-            return false
-        }
-
-        // Validate Water Intake
-        if (etWaterIntake.text.isNullOrEmpty()) {
-            etWaterIntake.error = "Konsumsi air harus diisi"
-            etWaterIntake.requestFocus()
-            return false
-        }
-
-        // Validate Calories
-        if (etCalories.text.isNullOrEmpty()) {
-            etCalories.error = "Kalori harus diisi"
-            etCalories.requestFocus()
-            return false
-        }
-
-        // Validate Systolic
-        if (etSystolic.text.isNullOrEmpty()) {
-            etSystolic.error = "Tekanan sistolik harus diisi"
-            etSystolic.requestFocus()
-            return false
-        }
-
-        // Validate Diastolic
-        if (etDiastolic.text.isNullOrEmpty()) {
-            etDiastolic.error = "Tekanan diastolik harus diisi"
-            etDiastolic.requestFocus()
-            return false
-        }
-
-        // Validate Heart Rate
-        if (etHeartRate.text.isNullOrEmpty()) {
-            etHeartRate.error = "Detak jantung harus diisi"
-            etHeartRate.requestFocus()
-            return false
-        }
-
-        // Validate Cholesterol
-        if (etCholesterol.text.isNullOrEmpty()) {
-            etCholesterol.error = "Kolesterol harus diisi"
-            etCholesterol.requestFocus()
-            return false
-        }
-
-        return true
+    override fun onDestroy() {
+        super.onDestroy()
+        if (::session.isInitialized) session.close()
+        if (::ortEnv.isInitialized) ortEnv.close()
     }
-
-    private fun submitData() {
-        val data = HealthData(
-            bmi = etBMI.text.toString().toFloat(),
-            age = etAge.text.toString().toInt(),
-            gender = etGender.text.toString(),
-            dailySteps = etDailySteps.text.toString().toInt(),
-            sleepHours = etSleepHours.text.toString().toFloat(),
-            smoker = if (rgSmoker.checkedRadioButtonId == R.id.rbSmokerYes) 1 else 0,
-            alcohol = if (rgAlcohol.checkedRadioButtonId == R.id.rbAlcoholYes) 1 else 0,
-            waterIntake = etWaterIntake.text.toString().toFloat(),
-            calories = etCalories.text.toString().toInt(),
-            systolic = etSystolic.text.toString().toInt(),
-            diastolic = etDiastolic.text.toString().toInt(),
-            heartRate = etHeartRate.text.toString().toInt(),
-            cholesterol = etCholesterol.text.toString().toInt()
-        )
-
-        // TODO: Send data to API or process it
-        Toast.makeText(this, "Data berhasil dikirim!", Toast.LENGTH_SHORT).show()
-
-        // Here you can add API call or navigate to result screen
-        // Example: sendToAPI(data)
-    }
-
-    data class HealthData(
-        val bmi: Float,
-        val age: Int,
-        val gender: String,
-        val dailySteps: Int,
-        val sleepHours: Float,
-        val smoker: Int,
-        val alcohol: Int,
-        val waterIntake: Float,
-        val calories: Int,
-        val systolic: Int,
-        val diastolic: Int,
-        val heartRate: Int,
-        val cholesterol: Int
-    )
 }
