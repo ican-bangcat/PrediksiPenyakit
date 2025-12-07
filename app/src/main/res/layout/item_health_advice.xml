@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    android:layout_marginBottom="12dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="start">
+
+        <!-- Nomor Advice dengan Background Bulat -->
+        <TextView
+            android:id="@+id/tvAdviceNumber"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:text="1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/circle_primary"
+            android:gravity="center"
+            android:layout_marginEnd="12dp"/>
+
+        <!-- Text Advice (TANPA icon ganda) -->
+        <TextView
+            android:id="@+id/tvAdviceText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Berhenti merokok untuk kesehatan jantung."
+            android:textSize="14sp"
+            android:textColor="#1a1a1a"
+            android:lineSpacingExtra="4dp"/>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

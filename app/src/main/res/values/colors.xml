@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Existing colors -->
+    <color name="primary">#2260FF</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="accent">#FF5722</color>
+
+    <!-- Risk Colors -->
+    <color name="risk_high">#D32F2F</color>
+    <color name="risk_high_bg">#FFEBEE</color>
+    <color name="risk_low">#388E3C</color>
+    <color name="risk_low_bg">#E8F5E9</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+
+    <!-- Background -->
+    <color name="background_color">#F5F5F5</color>
 </resources>
