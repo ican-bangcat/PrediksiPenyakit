@@ -27,7 +27,7 @@ class SplashActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
 
             // 1. Buat Intent untuk pindah ke MainActivity
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
 
             // 2. Hapus SplashActivity dari daftar Back Stack

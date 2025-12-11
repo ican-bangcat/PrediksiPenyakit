@@ -17,4 +17,5 @@
 
     <!-- Background -->
     <color name="background_color">#F5F5F5</color>
+    <color name="black" />
 </resources>

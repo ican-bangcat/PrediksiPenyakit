@@ -45,8 +45,8 @@ class ResultActivity : AppCompatActivity() {
                 binding.tvStatusDescription.text = "Selamat! Kondisi kesehatan Anda dalam kategori baik. Tetap jaga pola hidup sehat."
             }
 
-            // Tampilkan probabilitas
-            binding.tvProbability.text = "Probabilitas Risiko: ${String.format("%.1f", riskProbability * 100)}%"
+//            // Tampilkan probabilitas
+//            binding.tvProbability.text = "Probabilitas Risiko: ${String.format("%.1f", riskProbability * 100)}%"
 
             // Generate saran kesehatan
             val adviceList = generateHealthAdvice(data)
