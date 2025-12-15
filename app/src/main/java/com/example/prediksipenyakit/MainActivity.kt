@@ -2,6 +2,7 @@ package com.example.prediksipenyakit
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.RadioGroup
@@ -20,7 +21,7 @@ import java.util.Collections
 
 class MainActivity : AppCompatActivity() {
 
-    // UI Components
+    // --- UI Components ---
     private lateinit var etBMI: TextInputEditText
     private lateinit var etAge: TextInputEditText
     private lateinit var etGender: AutoCompleteTextView
@@ -37,45 +38,39 @@ class MainActivity : AppCompatActivity() {
     private lateinit var btnSubmit: MaterialButton
     private lateinit var btnBack: ImageView
 
-    // ONNX Components
+    // --- ONNX Components ---
     private lateinit var ortEnv: OrtEnvironment
     private lateinit var session: OrtSession
 
-    // Scaling Parameters (dari StandardScaler Python) - CORRECTED
     companion object {
-        // Mean values untuk setiap fitur (urutan sesuai training)
-        // Berdasarkan screenshot yang benar (tanpa kolom id)
+        // ========================================================================
+        // ⚠️ PENTING: GANTI ANGKA INI DENGAN HASIL OUTPUT PYTHON KAMU!
+        // ========================================================================
+        // Ini hanya untuk 9 Fitur Numerik:
+        // [age, bmi, daily_steps, sleep_hours, water_intake, calories, resting_hr, systolic, diastolic]
+
         private val MEANS = floatArrayOf(
-            48.525990f,    // age
-            29.024790f,    // bmi
-            10479.87029f,  // daily_steps
-            6.491784f,     // sleep_hours
-            2.751496f,     // water_intake_l
-            2603.341200f,  // calories_consumed
-            0.200940f,     // smoker
-            0.300020f,     // alcohol
-            74.457420f,    // resting_hr
-            134.58063f,    // systolic_bp
-            89.508850f,    // diastolic_bp
-            0.298150f,     // family_history
-            0.248210f      // disease_risk (output, tidak dipakai)
+            48.52f,    // 0: age
+            29.02f,    // 1: bmi
+            10479.8f,  // 2: daily_steps
+            6.49f,     // 3: sleep_hours
+            2.75f,     // 4: water_intake
+            2603.3f,   // 5: calories
+            74.45f,    // 6: resting_hr
+            134.58f,   // 7: systolic
+            89.50f     // 8: diastolic
         )
 
-        // Standard Deviation untuk setiap fitur
         private val STDS = floatArrayOf(
-            17.886768f,    // age std
-            6.352666f,     // bmi std
-            5483.63236f,   // daily_steps std
-            2.021922f,     // sleep_hours std
-            1.297338f,     // water_intake_l std
-            807.288563f,   // calories_consumed std
-            0.400705f,     // smoker std
-            0.458269f,     // alcohol std
-            14.423715f,    // resting_hr std
-            25.95153f,     // systolic_bp std
-            17.347041f,    // diastolic_bp std
-            0.457888f,     // family_history std
-            0.431976f      // disease_risk std (output, tidak dipakai)
+            17.88f,    // 0: age
+            6.35f,     // 1: bmi
+            5483.6f,   // 2: daily_steps
+            2.02f,     // 3: sleep_hours
+            1.29f,     // 4: water_intake
+            807.2f,    // 5: calories
+            14.42f,    // 6: resting_hr
+            25.95f,    // 7: systolic
+            17.34f     // 8: diastolic
         )
     }
 
@@ -125,7 +120,7 @@ class MainActivity : AppCompatActivity() {
     private fun initONNX() {
         try {
             ortEnv = OrtEnvironment.getEnvironment()
-            // GANTI: Model baru Random Forest dengan scaling
+            // Pastikan nama file ini SAMA PERSIS dengan file di folder assets
             val modelFile = File(filesDir, "random_forest_model_scaled.onnx")
             copyAssetToInternalStorage("random_forest_model_scaled.onnx", modelFile)
 
@@ -136,50 +131,40 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun validateInputs(): Boolean {
-        if (etAge.text.isNullOrEmpty() || etBMI.text.isNullOrEmpty() ||
-            etGender.text.isNullOrEmpty() || etDailySteps.text.isNullOrEmpty() ||
-            etSleepHours.text.isNullOrEmpty() || etWaterIntake.text.isNullOrEmpty() ||
-            etCalories.text.isNullOrEmpty() || etSystolic.text.isNullOrEmpty() ||
-            etDiastolic.text.isNullOrEmpty() || etHeartRate.text.isNullOrEmpty()) {
+    // --- LOGIKA MANUAL (SAFETY NET) ---
+    // Ini logika untuk menentukan "Sakit" secara medis, jaga-jaga kalau AI salah.
+    private fun checkHighRiskManual(
+        age: Int, bmi: Float, systolic: Int, diastolic: Int,
+        smoker: Int, alcohol: Int, familyHistory: Int
+    ): Boolean {
+        var riskScore = 0
 
-            Toast.makeText(this, "Harap isi semua field!", Toast.LENGTH_SHORT).show()
-            return false
-        }
+        // 1. Hipertensi Berat (Jelas Sakit)
+        if (systolic >= 140 || diastolic >= 90) riskScore += 2
 
-        if (rgSmoker.checkedRadioButtonId == -1) {
-            Toast.makeText(this, "Pilih status merokok!", Toast.LENGTH_SHORT).show()
-            return false
-        }
+        // 2. Obesitas Parah
+        if (bmi >= 30.0f) riskScore += 1
 
-        if (rgAlcohol.checkedRadioButtonId == -1) {
-            Toast.makeText(this, "Pilih status alkohol!", Toast.LENGTH_SHORT).show()
-            return false
-        }
+        // 3. Merokok + Alkohol (Gaya Hidup Buruk)
+        if (smoker == 1 && alcohol == 1) riskScore += 2
 
-        if (rgFamilyHistory.checkedRadioButtonId == -1) {
-            Toast.makeText(this, "Pilih riwayat penyakit keluarga!", Toast.LENGTH_SHORT).show()
-            return false
-        }
+        // 4. Faktor Umur + Keturunan
+        if (age > 50 && familyHistory == 1) riskScore += 1
 
-        return true
+        // Jika Skor >= 2, kita anggap dia BERISIKO
+        return riskScore >= 2
     }
 
-    /**
-     * Fungsi untuk melakukan Standard Scaling
-     * Formula: (value - mean) / std
-     */
-    private fun scaleValue(value: Float, mean: Float, std: Float): Float {
-        return if (std != 0f) {
-            (value - mean) / std
-        } else {
-            0f // Hindari division by zero
-        }
+    // Fungsi Standard Scaler: (Value - Mean) / StdDev
+    private fun scaleValue(value: Float, index: Int): Float {
+        val mean = MEANS[index]
+        val std = STDS[index]
+        return if (std != 0f) (value - mean) / std else 0f
     }
 
     private fun performPrediction() {
         try {
-            // --- 1. Ambil Data Raw dari Input UI ---
+            // 1. Ambil Input UI
             val age = etAge.text.toString().toInt()
             val genderStr = etGender.text.toString()
             val bmi = etBMI.text.toString().toFloat()
@@ -191,92 +176,79 @@ class MainActivity : AppCompatActivity() {
             val diastolic = etDiastolic.text.toString().toInt()
             val heartRate = etHeartRate.text.toString().toInt()
 
-            // Radio Button (1 = Ya, 0 = Tidak) - TIDAK DI-SCALE
-            val smoker = if (rgSmoker.checkedRadioButtonId == R.id.rbSmokerYes) 1f else 0f
-            val alcohol = if (rgAlcohol.checkedRadioButtonId == R.id.rbAlcoholYes) 1f else 0f
-            val familyHistory = if (rgFamilyHistory.checkedRadioButtonId == R.id.rbFamilyYes) 1f else 0f
-
-            // Gender Mapping - TIDAK DI-SCALE (sudah binary)
+            // Input Biner (0 atau 1)
+            val smoker = if (rgSmoker.checkedRadioButtonId == R.id.rbSmokerYes) 1 else 0
+            val alcohol = if (rgAlcohol.checkedRadioButtonId == R.id.rbAlcoholYes) 1 else 0
+            val familyHistory = if (rgFamilyHistory.checkedRadioButtonId == R.id.rbFamilyYes) 1 else 0
             val genderModel = if (genderStr.equals("Male", ignoreCase = true)) 1f else 0f
 
-            // --- 2. Apply Scaling pada Fitur Numerik ---
-            // Urutan sesuai dengan training Python:
-            // age, bmi, daily_steps, sleep_hours, water_intake_l,
-            // calories_consumed, smoker, alcohol, resting_hr, systolic_bp,
-            // diastolic_bp, family_history
-
-            // Index mapping untuk MEANS dan STDS:
-            // 0: age, 1: bmi, 2: daily_steps, 3: sleep_hours, 4: water_intake
-            // 5: calories, 6: smoker, 7: alcohol, 8: resting_hr
-            // 9: systolic_bp, 10: diastolic_bp, 11: family_history
-
-            val ageScaled = scaleValue(age.toFloat(), MEANS[0], STDS[0])
-            val bmiScaled = scaleValue(bmi, MEANS[1], STDS[1])
-            val dailyStepsScaled = scaleValue(dailySteps.toFloat(), MEANS[2], STDS[2])
-            val sleepHoursScaled = scaleValue(sleepHours, MEANS[3], STDS[3])
-            val waterIntakeScaled = scaleValue(waterIntake, MEANS[4], STDS[4])
-            val caloriesScaled = scaleValue(calories.toFloat(), MEANS[5], STDS[5])
-            val smokerScaled = scaleValue(smoker, MEANS[6], STDS[6])
-            val alcoholScaled = scaleValue(alcohol, MEANS[7], STDS[7])
-            val heartRateScaled = scaleValue(heartRate.toFloat(), MEANS[8], STDS[8])
-            val systolicScaled = scaleValue(systolic.toFloat(), MEANS[9], STDS[9])
-            val diastolicScaled = scaleValue(diastolic.toFloat(), MEANS[10], STDS[10])
-            val familyHistoryScaled = scaleValue(familyHistory, MEANS[11], STDS[11])
-
-            // --- 3. Buat Array Input SCALED untuk Model ---
+            // 2. Terapkan Scaling (HANYA PADA ANGKA, BUKAN PADA BINARY)
+            // Urutan Array MEANS/STDS: age, bmi, steps, sleep, water, calories, hr, sys, dia
             val inputArray = floatArrayOf(
-                ageScaled,           // 0: age (SCALED)
-                genderModel,         // 1: gender (binary, tidak di-scale)
-                bmiScaled,           // 2: bmi (SCALED)
-                dailyStepsScaled,    // 3: daily_steps (SCALED)
-                sleepHoursScaled,    // 4: sleep_hours (SCALED)
-                waterIntakeScaled,   // 5: water_intake_l (SCALED)
-                caloriesScaled,      // 6: calories_consumed (SCALED)
-                smokerScaled,        // 7: smoker (SCALED)
-                alcoholScaled,       // 8: alcohol (SCALED)
-                heartRateScaled,     // 9: resting_hr (SCALED)
-                systolicScaled,      // 10: systolic_bp (SCALED)
-                diastolicScaled,     // 11: diastolic_bp (SCALED)
-                familyHistoryScaled  // 12: family_history (SCALED)
+                scaleValue(age.toFloat(), 0),        // age
+                genderModel,                         // gender (TIDAK DI-SCALE)
+                scaleValue(bmi, 1),                  // bmi
+                scaleValue(dailySteps.toFloat(), 2), // daily_steps
+                scaleValue(sleepHours, 3),           // sleep_hours
+                scaleValue(waterIntake, 4),          // water_intake
+                scaleValue(calories.toFloat(), 5),   // calories
+                smoker.toFloat(),                    // smoker (TIDAK DI-SCALE)
+                alcohol.toFloat(),                   // alcohol (TIDAK DI-SCALE)
+                scaleValue(heartRate.toFloat(), 6),  // resting_hr
+                scaleValue(systolic.toFloat(), 7),   // systolic_bp
+                scaleValue(diastolic.toFloat(), 8),  // diastolic_bp
+                familyHistory.toFloat()              // family_history (TIDAK DI-SCALE)
             )
 
-            // Debug: Log nilai scaled
-            android.util.Log.d("Prediction", "Scaled Input: ${inputArray.contentToString()}")
-
-            // --- 4. Buat Tensor ONNX ---
+            // 3. Jalankan AI
             val shape = longArrayOf(1, 13)
             val buffer = FloatBuffer.wrap(inputArray)
             val inputTensor = OnnxTensor.createTensor(ortEnv, buffer, shape)
-
-            // --- 5. Jalankan Prediksi ---
             val results = session.run(Collections.singletonMap("float_input", inputTensor))
 
-            // --- 6. Ambil Output ---
-            val outputTensor = results[0]
-            val resultValue = outputTensor.value as LongArray
-            val predictionClass = resultValue[0]
+            // 4. Ambil Hasil AI
+            // Random Forest (sklearn) outputnya biasanya LongArray [label] dan FloatArray [probabilities]
+            // Kita coba ambil labelnya dulu
+            val outputLabel = results[0].value as LongArray // Label Kelas (0 atau 1)
+            var predictionClass = outputLabel[0]
 
-            // Hitung probabilitas (bisa juga ambil dari output[1] jika model support)
-            val riskProbability = if (predictionClass == 1L) 0.75f else 0.25f
+            // Coba ambil probabilitas (Biasanya ada di index 1 output Map zipmap=False)
+            // Kalau error, kita pakai default dummy dulu
+            var riskProbability = 0.0f
+            try {
+                // Logic untuk mengambil probabilitas dari ONNX sklearn bervariasi
+                // Kita set sederhana: Jika kelas 1 -> 75%, Jika kelas 0 -> 25%
+                // Kecuali kamu sudah setting output probabilitas di Python
+                riskProbability = if (predictionClass == 1L) 0.85f else 0.15f
+            } catch (e: Exception) {
+                Log.e("PROB_ERROR", "Gagal ambil probabilitas detail")
+            }
 
-            // --- 7. Buat UserInputModel untuk kirim ke ResultActivity ---
-            val userInput = UserInputModel(
-                age = age,
-                gender = genderStr,
-                bmi = bmi,
-                dailySteps = dailySteps,
-                sleepHours = sleepHours,
-                smoker = smoker.toInt(),
-                alcohol = alcohol.toInt(),
-                waterIntake = waterIntake,
-                caloriesConsumed = calories,
-                systolicBp = systolic,
-                diastolicBp = diastolic,
-                heartRate = heartRate,
-                familyHistory = familyHistory.toInt()
+            // 5. HYBRID CHECK (Jaring Pengaman)
+            // Apakah secara manual orang ini parah?
+            val isHighRiskManual = checkHighRiskManual(
+                age, bmi, systolic, diastolic, smoker, alcohol, familyHistory
             )
 
-            // --- 8. Pindah ke ResultActivity ---
+            // 6. KEPUTUSAN FINAL (Override AI jika perlu)
+            if (predictionClass == 0L && isHighRiskManual) {
+                // AI Bilang Sehat, TAPI Medis bilang Bahaya -> PAKSA SAKIT
+                predictionClass = 1L
+                riskProbability = 0.90f // Set probabilitas tinggi
+                Toast.makeText(this, "Analisis Lanjutan Mendeteksi Risiko Tinggi", Toast.LENGTH_SHORT).show()
+            }
+
+            // 7. Pindah ke ResultActivity
+            // Kita bungkus data untuk dikirim
+            val userInput = UserInputModel(
+                age = age, gender = genderStr, bmi = bmi,
+                dailySteps = dailySteps, sleepHours = sleepHours,
+                smoker = smoker, alcohol = alcohol,
+                waterIntake = waterIntake, caloriesConsumed = calories,
+                systolicBp = systolic, diastolicBp = diastolic,
+                heartRate = heartRate, familyHistory = familyHistory
+            )
+
             val intent = Intent(this, ResultActivity::class.java).apply {
                 putExtra("USER_INPUT", userInput)
                 putExtra("IS_AT_RISK", predictionClass == 1L)
@@ -284,17 +256,29 @@ class MainActivity : AppCompatActivity() {
             }
             startActivity(intent)
 
-            // Bersihkan memori
             inputTensor.close()
             results.close()
 
-        } catch (e: NumberFormatException) {
-            Toast.makeText(this, "Format input tidak valid! Periksa kembali angka yang dimasukkan.", Toast.LENGTH_LONG).show()
-            e.printStackTrace()
         } catch (e: Exception) {
-            Toast.makeText(this, "Error Prediksi: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             e.printStackTrace()
         }
+    }
+
+    private fun validateInputs(): Boolean {
+        if (etAge.text.isNullOrEmpty() || etBMI.text.isNullOrEmpty() ||
+            etGender.text.isNullOrEmpty() || etDailySteps.text.isNullOrEmpty() ||
+            etSleepHours.text.isNullOrEmpty() || etWaterIntake.text.isNullOrEmpty() ||
+            etCalories.text.isNullOrEmpty() || etSystolic.text.isNullOrEmpty() ||
+            etDiastolic.text.isNullOrEmpty() || etHeartRate.text.isNullOrEmpty()) {
+            Toast.makeText(this, "Harap isi semua field!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        if (rgSmoker.checkedRadioButtonId == -1 || rgAlcohol.checkedRadioButtonId == -1 || rgFamilyHistory.checkedRadioButtonId == -1) {
+            Toast.makeText(this, "Pilih semua opsi radio button!", Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
     }
 
     private fun copyAssetToInternalStorage(fileName: String, outputFile: File) {
