@@ -34,5 +34,14 @@ class HomeActivity : AppCompatActivity() {
         btnNews.setOnClickListener {
             // Logika pindah ke halaman news
         }
+
+        // 1. Cari view tombol profile (LinearLayout)
+        val btnProfile = findViewById<LinearLayout>(R.id.btnProfile)
+
+        // 2. Set listener
+        btnProfile.setOnClickListener {
+            val intent = Intent(this, ProfileActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
