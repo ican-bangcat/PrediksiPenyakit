@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.0"
 }
 
 android {
@@ -65,4 +66,18 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // --- SUPABASE & KTOR ---
+    // BOM untuk mengatur versi otomatis
+    implementation(platform("io.github.jan-tennert.supabase:bom:3.0.0"))
+
+    // Modul Supabase yang kita butuh
+    implementation("io.github.jan-tennert.supabase:postgrest-kt") // Database
+    implementation("io.github.jan-tennert.supabase:auth-kt")    // Auth (Login/Register)
+    implementation("io.github.jan-tennert.supabase:storage-kt")   // Storage (buat gambar artikel nanti)
+
+    // Engine Ktor (Wajib buat Supabase jalan di Android)
+    implementation("io.ktor:ktor-client-android:3.0.0")
+
+    // Serialization (Buat ubah Data JSON <-> Kotlin Object)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 }
