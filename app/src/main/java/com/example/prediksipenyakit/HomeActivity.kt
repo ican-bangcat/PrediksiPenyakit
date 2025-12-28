@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 
 class HomeActivity : AppCompatActivity() {
@@ -70,7 +69,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         btnPredict.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, PredictionActivity::class.java)
             startActivity(intent)
         }
     }

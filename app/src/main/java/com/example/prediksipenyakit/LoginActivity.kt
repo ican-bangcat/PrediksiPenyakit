@@ -8,9 +8,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.textfield.TextInputEditText
-// PERUBAHAN DI SINI 👇 (Pakai 'auth', bukan 'gotrue')
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
@@ -38,20 +38,49 @@ class LoginActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 try {
-                    // Supabase Auth (Sign In)
+                    // 1. PROSES LOGIN (Cek Email & Password)
                     SupabaseClient.client.auth.signInWith(Email) {
                         this.email = email
                         this.password = password
                     }
 
-                    Toast.makeText(applicationContext, "Login Berhasil!", Toast.LENGTH_SHORT).show()
+                    // 2. CEK ROLE (Ambil data dari tabel 'profiles')
+                    val user = SupabaseClient.client.auth.currentUserOrNull()
+                    if (user != null) {
+                        val userId = user.id
 
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    startActivity(intent)
+                        // Query ke database: Cari profile milik user ini
+                        val profile = SupabaseClient.client.postgrest["profiles"]
+                            .select {
+                                filter {
+                                    eq("id", userId)
+                                }
+                            }.decodeSingle<Profile>()
+
+                        Toast.makeText(applicationContext, "Login Berhasil! Role: ${profile.role}", Toast.LENGTH_SHORT).show()
+
+                        // 3. PENGALIHAN HALAMAN BERDASARKAN ROLE
+                        if (profile.role == "admin") {
+                            // Jika Admin -> Masuk AdminActivity
+                            val intent = Intent(this@LoginActivity, AdminActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                        } else {
+                            // Jika User Biasa -> Masuk HomeActivity (Dashboard)
+                            // Catatan: Sesuai diskusi sebelumnya, User harusnya ke HomeActivity dulu, bukan langsung Prediksi
+                            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            startActivity(intent)
+                        }
+                    }
 
                 } catch (e: Exception) {
-                    Toast.makeText(applicationContext, "Login Gagal: Periksa Email/Password", Toast.LENGTH_LONG).show()
+                    e.printStackTrace()
+                    // Pesan error lebih detail jika perlu
+                    val errorMsg = if (e.message?.contains("Invalid login credentials") == true)
+                        "Email atau Password Salah" else "Gagal Login: ${e.message}"
+
+                    Toast.makeText(applicationContext, errorMsg, Toast.LENGTH_LONG).show()
                 } finally {
                     btnLogin.isEnabled = true
                     btnLogin.text = "Login"

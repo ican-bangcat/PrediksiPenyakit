@@ -19,7 +19,7 @@ import java.io.FileOutputStream
 import java.nio.FloatBuffer
 import java.util.Collections
 
-class MainActivity : AppCompatActivity() {
+class PredictionActivity : AppCompatActivity() {
 
     // --- UI Components ---
     private lateinit var etBMI: TextInputEditText
@@ -76,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_prediction)
 
         initViews()
         setupGenderDropdown()
