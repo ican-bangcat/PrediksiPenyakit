@@ -19,7 +19,7 @@
             android:id="@+id/imgArticleThumb"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:src="@drawable/ic_local_hospital"
+            android:src="@drawable/hospital"
             android:scaleType="centerCrop"
             android:background="#E0F7FA"/>
 
