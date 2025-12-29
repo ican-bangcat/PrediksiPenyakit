@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp"
-    android:layout_marginBottom="12dp"
+    android:layout_marginBottom="8dp"
     app:cardBackgroundColor="#FFFFFF">
 
     <LinearLayout
@@ -13,28 +13,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:gravity="start">
+        android:gravity="center_vertical"> <TextView
+        android:id="@+id/tvAdviceNumber"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:text="1"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        android:background="@drawable/circle_primary"
+        android:gravity="center"
+        android:layout_marginEnd="16dp"/>
 
-        <!-- Nomor Advice dengan Background Bulat -->
-        <TextView
-            android:id="@+id/tvAdviceNumber"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:text="1"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/circle_primary"
-            android:gravity="center"
-            android:layout_marginEnd="12dp"/>
-
-        <!-- Text Advice (TANPA icon ganda) -->
         <TextView
             android:id="@+id/tvAdviceText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Berhenti merokok untuk kesehatan jantung."
+            android:text="Saran kesehatan akan muncul di sini."
             android:textSize="14sp"
             android:textColor="#1a1a1a"
             android:lineSpacingExtra="4dp"/>
