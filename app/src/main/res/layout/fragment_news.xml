@@ -8,7 +8,6 @@
     android:background="#F8FAFC"
     android:paddingTop="24dp">
 
-    <!-- Header Title -->
     <TextView
         android:id="@+id/tvNewsTitle"
         android:layout_width="wrap_content"
@@ -26,13 +25,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Info kesehatan kulit terbaru untukmu"
+        android:text="Info kesehatan terbaru untukmu"
         android:textColor="#64748B"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="@id/tvNewsTitle"
         app:layout_constraintTop_toBottomOf="@id/tvNewsTitle" />
 
-    <!-- Search Bar -->
     <androidx.cardview.widget.CardView
         android:id="@+id/searchContainer"
         android:layout_width="match_parent"
@@ -58,10 +56,11 @@
                 app:tint="#94A3B8" />
 
             <EditText
+                android:id="@+id/etSearch"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@null"
-                android:hint="Cari artikel, tips, atau dokter..."
+                android:hint="Cari artikel, tips, atau berita..."
                 android:paddingStart="12dp"
                 android:textColor="#1E293B"
                 android:textColorHint="#94A3B8"
@@ -71,7 +70,6 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Filter Chips (Horizontal Scroll) -->
     <HorizontalScrollView
         android:id="@+id/chipContainer"
         android:layout_width="match_parent"
@@ -87,8 +85,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!-- Chip 1 (Active) -->
             <TextView
+                android:id="@+id/chipAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_chip_active"
@@ -100,44 +98,67 @@
                 android:textSize="12sp"
                 android:layout_marginEnd="8dp"/>
 
-            <!-- Chip 2 -->
             <TextView
+                android:id="@+id/chipJantung"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_chip_inactive"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
-                android:text="Tips Kulit"
+                android:text="Kesehatan Jantung"
                 android:textColor="#64748B"
                 android:textSize="12sp"
                 android:layout_marginEnd="8dp"/>
 
-            <!-- Chip 3 -->
             <TextView
+                android:id="@+id/chipNutrisi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_chip_inactive"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
-                android:text="Gaya Hidup"
+                android:text="Nutrisi &amp; Diet"
                 android:textColor="#64748B"
                 android:textSize="12sp"
                 android:layout_marginEnd="8dp"/>
 
-            <!-- Chip 4 -->
             <TextView
+                android:id="@+id/chipFisik"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_chip_inactive"
                 android:paddingHorizontal="20dp"
                 android:paddingVertical="8dp"
-                android:text="Makanan Sehat"
+                android:text="Aktivitas Fisik"
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/chipTidur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip_inactive"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:text="Tidur &amp; Istirahat"
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/chipUmum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_chip_inactive"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="8dp"
+                android:text="Umum"
                 android:textColor="#64748B"
                 android:textSize="12sp"/>
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- News List (RecyclerView) -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNews"
         android:layout_width="match_parent"
@@ -148,5 +169,27 @@
         tools:listitem="@layout/item_news"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chipContainer" />
+
+    <ProgressBar
+        android:id="@+id/progressBarNews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddNews"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="100dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="#2260FF"
+        app:tint="#FFFFFF"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

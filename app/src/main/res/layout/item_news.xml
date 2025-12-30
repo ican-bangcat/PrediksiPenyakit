@@ -15,8 +15,6 @@
         android:layout_height="wrap_content"
         android:padding="12dp">
 
-        <!-- News Image -->
-        <!-- Gunakan ShapeableImageView agar sudut gambar agak melengkung -->
         <ImageView
             android:id="@+id/imgNewsThumbnail"
             android:layout_width="90dp"
@@ -29,7 +27,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Category Tag -->
         <TextView
             android:id="@+id/tvCategory"
             android:layout_width="wrap_content"
@@ -44,14 +41,13 @@
             app:layout_constraintStart_toEndOf="@id/imgNewsThumbnail"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- News Title -->
         <TextView
             android:id="@+id/tvNewsTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="8dp"
-            android:text="Cara Mengatasi Kulit Kering Saat Cuaca Panas"
+            android:text="Judul Berita"
             android:textColor="#1E293B"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -62,7 +58,6 @@
             app:layout_constraintStart_toStartOf="@id/tvCategory"
             app:layout_constraintTop_toBottomOf="@id/tvCategory" />
 
-        <!-- Date & Time -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,13 +80,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="4dp"
-                android:text="2 Jam yang lalu"
+                android:text="Baru saja"
                 android:textColor="#94A3B8"
                 android:textSize="10sp" />
         </LinearLayout>
 
-        <!-- Read More Arrow -->
         <ImageView
+            android:id="@+id/btnReadMore"
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:src="@drawable/ic_arrow_back"
@@ -99,6 +94,30 @@
             app:tint="#2260FF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/adminControls"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/btnEdit"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_edit"
+                app:tint="#F59E0B"
+                android:layout_marginEnd="12dp"/>
+            <ImageView
+                android:id="@+id/btnDelete"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_delete"
+                app:tint="#EF4444"/>
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

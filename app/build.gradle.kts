@@ -80,4 +80,7 @@ dependencies {
 
     // Serialization (Buat ubah Data JSON <-> Kotlin Object)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
+    // Coil (Untuk load gambar)
+    implementation("io.coil-kt:coil:2.6.0")
 }
