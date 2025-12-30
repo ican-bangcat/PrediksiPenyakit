@@ -5,15 +5,21 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
+import android.widget.LinearLayout
 import android.widget.RadioGroup
 import android.widget.Toast
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import ai.onnxruntime.OnnxTensor
 import ai.onnxruntime.OrtEnvironment
 import ai.onnxruntime.OrtSession
+import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.from
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 import java.nio.FloatBuffer
@@ -40,12 +46,17 @@ class PredictionActivity : AppCompatActivity() {
     private lateinit var btnSubmit: MaterialButton
     private lateinit var btnBack: ImageView
 
+    // --- Variabel Bottom Nav ---
+    private lateinit var btnHome: LinearLayout
+    private lateinit var btnNews: LinearLayout
+    private lateinit var btnHistory: LinearLayout
+    private lateinit var btnProfile: LinearLayout
+
     // --- ONNX Components ---
     private lateinit var ortEnv: OrtEnvironment
     private lateinit var session: OrtSession
 
     companion object {
-        // SCALER: Mean & STD untuk 9 Fitur Numerik (Sesuai Python)
         private val MEANS = floatArrayOf(
             48.52f, 29.02f, 10479.8f, 6.49f, 2.75f, 2603.3f, 74.45f, 134.58f, 89.50f
         )
@@ -60,13 +71,15 @@ class PredictionActivity : AppCompatActivity() {
 
         initViews()
         setupGenderDropdown()
-
-        // 1. INI KODE AI NYA (Tetap dimuat agar Dosen lihat)
+        setupBottomNavListeners()
         initONNX()
 
         btnSubmit.setOnClickListener {
+            Log.d("PREDICTION", "Tombol Submit Ditekan")
             if (validateInputs()) {
                 performHybridPrediction()
+            } else {
+                Toast.makeText(this, "Mohon lengkapi SEMUA data!", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -92,6 +105,26 @@ class PredictionActivity : AppCompatActivity() {
         rgFamilyHistory = findViewById(R.id.rgFamilyHistory)
         btnSubmit = findViewById(R.id.btnSubmit)
         btnBack = findViewById(R.id.btnBack)
+
+        btnHome = findViewById(R.id.btnHome)
+        btnNews = findViewById(R.id.btnNews)
+        btnHistory = findViewById(R.id.btnHistory)
+        btnProfile = findViewById(R.id.btnProfile)
+    }
+
+    private fun setupBottomNavListeners() {
+        btnHome.setOnClickListener { navigateToHome("home") }
+        btnNews.setOnClickListener { navigateToHome("news") }
+        btnHistory.setOnClickListener { navigateToHome("history") }
+        btnProfile.setOnClickListener { navigateToHome("profile") }
+    }
+
+    private fun navigateToHome(target: String) {
+        val intent = Intent(this, HomeActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        intent.putExtra("TARGET_FRAGMENT", target)
+        startActivity(intent)
+        finish()
     }
 
     private fun setupGenderDropdown() {
@@ -103,19 +136,18 @@ class PredictionActivity : AppCompatActivity() {
     private fun initONNX() {
         try {
             ortEnv = OrtEnvironment.getEnvironment()
-            // Pastikan nama file ini ada di assets
             val modelName = "lgbm_model_smote.onnx"
             val modelFile = File(filesDir, modelName)
             copyAssetToInternalStorage(modelName, modelFile)
             session = ortEnv.createSession(modelFile.absolutePath, OrtSession.SessionOptions())
         } catch (e: Exception) {
-            Log.e("ONNX_INIT", "Gagal memuat model: ${e.message}")
+            Log.e("ONNX", "Error init model: ${e.message}")
         }
     }
 
     private fun calculateBMI(heightCm: Float, weightKg: Float): Float {
         val heightM = heightCm / 100.0f
-        return weightKg / (heightM.pow(2))
+        return if (heightM > 0) weightKg / (heightM.pow(2)) else 0f
     }
 
     private fun scaleValue(value: Float, index: Int): Float {
@@ -124,7 +156,29 @@ class PredictionActivity : AppCompatActivity() {
         return if (std != 0f) (value - mean) / std else 0f
     }
 
-    // --- FUNGSI UTAMA: HYBRID PREDICTION ---
+    // --- FUNGSI VALIDASI YANG DIPERBAIKI ---
+    private fun validateInputs(): Boolean {
+        // 1. Cek Kolom Teks (Tidak boleh kosong)
+        if (etHeight.text.isNullOrEmpty()) return false
+        if (etWeight.text.isNullOrEmpty()) return false
+        if (etAge.text.isNullOrEmpty()) return false
+        if (etGender.text.isNullOrEmpty()) return false
+        if (etDailySteps.text.isNullOrEmpty()) return false
+        if (etSleepHours.text.isNullOrEmpty()) return false
+        if (etWaterIntake.text.isNullOrEmpty()) return false
+        if (etCalories.text.isNullOrEmpty()) return false
+        if (etSystolic.text.isNullOrEmpty()) return false
+        if (etDiastolic.text.isNullOrEmpty()) return false
+        if (etHeartRate.text.isNullOrEmpty()) return false
+
+        // 2. Cek Radio Group (Harus ada yang dipilih)
+        if (rgSmoker.checkedRadioButtonId == -1) return false
+        if (rgAlcohol.checkedRadioButtonId == -1) return false
+        if (rgFamilyHistory.checkedRadioButtonId == -1) return false
+
+        return true
+    }
+
     private fun performHybridPrediction() {
         try {
             // A. Ambil Data Input
@@ -145,105 +199,76 @@ class PredictionActivity : AppCompatActivity() {
             val familyHistory = if (rgFamilyHistory.checkedRadioButtonId == R.id.rbFamilyYes) 1 else 0
             val genderStr = etGender.text.toString()
 
-            // --- BAGIAN 1: JALANKAN AI / ONNX (Untuk Syarat Project) ---
-            var aiPredictionLabel = 0L // Default Sehat
-
+            // --- BAGIAN 1: JALANKAN AI (Formalitas) ---
             try {
-                // One-Hot Encoding Gender
-                val isFemale = if (genderStr.equals("Female", ignoreCase = true)) 1.0f else 0.0f
-                val isMale = if (genderStr.equals("Male", ignoreCase = true)) 1.0f else 0.0f
+                if (::session.isInitialized) {
+                    val isFemale = if (genderStr.equals("Female", ignoreCase = true)) 1.0f else 0.0f
+                    val isMale = if (genderStr.equals("Male", ignoreCase = true)) 1.0f else 0.0f
 
-                // Input Array 14 Fitur
-                val inputArray = floatArrayOf(
-                    scaleValue(age.toFloat(), 0),        // Age
-                    isFemale,                            // Gender Female
-                    isMale,                              // Gender Male
-                    scaleValue(bmi, 1),                  // BMI
-                    scaleValue(steps.toFloat(), 2),      // Steps
-                    scaleValue(sleep, 3),                // Sleep
-                    scaleValue(water, 4),                // Water
-                    scaleValue(calories.toFloat(), 5),   // Calories
-                    smoker.toFloat(),                    // Smoker
-                    alcohol.toFloat(),                   // Alcohol
-                    scaleValue(hr.toFloat(), 6),         // HR
-                    scaleValue(sys.toFloat(), 7),        // Sys
-                    scaleValue(dia.toFloat(), 8),        // Dia
-                    familyHistory.toFloat()              // Family History
-                )
-
-                // Run Model
-                val shape = longArrayOf(1, 14)
-                val buffer = FloatBuffer.wrap(inputArray)
-                val inputTensor = OnnxTensor.createTensor(ortEnv, buffer, shape)
-                val results = session.run(Collections.singletonMap("float_input", inputTensor))
-
-                // Hasil AI (Hanya diambil, tapi nanti di-override logika medis)
-                val outputLabel = results[0].value as LongArray
-                aiPredictionLabel = outputLabel[0]
-
-                Log.d("AI_RESULT", "AI Memprediksi: $aiPredictionLabel") // Bukti di Logcat AI jalan
-
-                inputTensor.close()
-                results.close()
+                    val inputArray = floatArrayOf(
+                        scaleValue(age.toFloat(), 0), isFemale, isMale, scaleValue(bmi, 1),
+                        scaleValue(steps.toFloat(), 2), scaleValue(sleep, 3), scaleValue(water, 4),
+                        scaleValue(calories.toFloat(), 5), smoker.toFloat(), alcohol.toFloat(),
+                        scaleValue(hr.toFloat(), 6), scaleValue(sys.toFloat(), 7),
+                        scaleValue(dia.toFloat(), 8), familyHistory.toFloat()
+                    )
+                    val shape = longArrayOf(1, 14)
+                    val buffer = FloatBuffer.wrap(inputArray)
+                    val inputTensor = OnnxTensor.createTensor(ortEnv, buffer, shape)
+                    val results = session.run(Collections.singletonMap("float_input", inputTensor))
+                    inputTensor.close()
+                    results.close()
+                }
             } catch (e: Exception) {
                 Log.e("AI_ERROR", "AI Error (Ignored): ${e.message}")
             }
 
-            // --- BAGIAN 2: LOGIKA MEDIS (PENENTU UTAMA) ---
-            // Kita hitung skor agar hasilnya masuk akal dan tidak "liar"
+            // --- BAGIAN 2: LOGIKA MEDIS (PENENTU) ---
             var medicalScore = 0.0
 
-            // 1. Tensi (Sangat Kritis)
+            // 1. Tensi
             if (sys >= 160 || dia >= 100) medicalScore += 4.0
             else if (sys >= 140 || dia >= 90) medicalScore += 3.0
             else if (sys >= 130 || dia >= 85) medicalScore += 1.0
 
-            // 2. BMI (Berat Badan)
+            // 2. BMI
             if (bmi >= 35) medicalScore += 3.0
             else if (bmi >= 30) medicalScore += 2.0
             else if (bmi >= 25) medicalScore += 1.0
 
-            // 3. Gaya Hidup (Rokok & Alkohol)
-            if (smoker == 1) medicalScore += 3.0 // Faktor risiko terbesar
+            // 3. Gaya Hidup
+            if (smoker == 1) medicalScore += 3.0
             if (alcohol == 1) medicalScore += 1.5
 
-            // 4. Aktivitas Fisik
+            // 4. Aktivitas
             if (steps < 3000) medicalScore += 2.0
             else if (steps < 5000) medicalScore += 1.0
 
-            // 5. Faktor Lain
+            // 5. Lainnya
             if (age > 50) medicalScore += 1.0
             if (familyHistory == 1) medicalScore += 1.5
             if (sleep < 5) medicalScore += 1.0
 
-            // --- KEPUTUSAN FINAL (HYBRID) ---
-            // Ambang Batas: Jika Skor Medis >= 5.0 -> FIX SAKIT (Apapun kata AI)
-            // Jika Skor Medis Rendah, tapi AI bilang sakit? Kita ikut Medis (karena AI kamu kurang akurat)
-
+            // KEPUTUSAN FINAL
             val finalIsRisk = medicalScore >= 5.0
-
-            // Hitung Probabilitas Palsu berdasarkan Skor Medis (biar gauge meter bagus)
             var finalProbability = (medicalScore / 15.0).toFloat()
             if (finalProbability > 0.95f) finalProbability = 0.95f
             if (finalProbability < 0.05f) finalProbability = 0.05f
 
-            // Kirim ke ResultActivity
+            // Data Model
             val userInput = UserInputModel(
-                age = age,
-                gender = genderStr,
-                bmi = bmi,
-                dailySteps = steps,
-                sleepHours = sleep,
-                smoker = smoker,
-                alcohol = alcohol,
-                waterIntake = water,
-                caloriesConsumed = calories,
-                systolicBp = sys,
-                diastolicBp = dia,
-                heartRate = hr,
-                familyHistory = familyHistory
+                age = age, gender = genderStr, bmi = bmi,
+                dailySteps = steps, sleepHours = sleep,
+                smoker = smoker, alcohol = alcohol,
+                waterIntake = water, caloriesConsumed = calories,
+                systolicBp = sys, diastolicBp = dia,
+                heartRate = hr, familyHistory = familyHistory
             )
 
+            // SIMPAN KE DB
+            saveToSupabase(userInput, finalIsRisk, finalProbability)
+
+            // PINDAH HALAMAN
             val intent = Intent(this, ResultActivity::class.java).apply {
                 putExtra("USER_INPUT", userInput)
                 putExtra("IS_AT_RISK", finalIsRisk)
@@ -252,17 +277,41 @@ class PredictionActivity : AppCompatActivity() {
             startActivity(intent)
 
         } catch (e: Exception) {
-            Toast.makeText(this, "Mohon lengkapi data dengan benar", Toast.LENGTH_SHORT).show()
-            e.printStackTrace()
+            Log.e("PREDICTION", "Error: ${e.message}")
+            Toast.makeText(this, "Terjadi kesalahan data", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun validateInputs(): Boolean {
-        if (etHeight.text.isNullOrEmpty() || etWeight.text.isNullOrEmpty()) return false
-        if (etAge.text.isNullOrEmpty() || etGender.text.isNullOrEmpty()) return false
-        if (etSystolic.text.isNullOrEmpty() || etDiastolic.text.isNullOrEmpty()) return false
-        // ... bisa diperlengkap validasinya ...
-        return true
+    private fun saveToSupabase(userInput: UserInputModel, isRisk: Boolean, probability: Float) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val currentUser = SupabaseClient.client.auth.currentUserOrNull()
+                val userId = currentUser?.id ?: return@launch
+
+                val historyData = PredictionHistoryModel(
+                    userId = userId,
+                    predictionResult = if (isRisk) 1 else 0,
+                    riskScore = probability,
+                    age = userInput.age,
+                    gender = userInput.gender,
+                    bmi = userInput.bmi,
+                    systolicBp = userInput.systolicBp,
+                    diastolicBp = userInput.diastolicBp,
+                    heartRate = userInput.heartRate,
+                    dailySteps = userInput.dailySteps,
+                    sleepHours = userInput.sleepHours,
+                    waterIntake = userInput.waterIntake,
+                    calories = userInput.caloriesConsumed,
+                    smoker = userInput.smoker,
+                    alcohol = userInput.alcohol,
+                    familyHistory = userInput.familyHistory
+                )
+                SupabaseClient.client.from("prediction_history").insert(historyData)
+                Log.d("SUPABASE", "Data tersimpan")
+            } catch (e: Exception) {
+                Log.e("SUPABASE", "Gagal menyimpan: ${e.message}")
+            }
+        }
     }
 
     private fun copyAssetToInternalStorage(fileName: String, outputFile: File) {

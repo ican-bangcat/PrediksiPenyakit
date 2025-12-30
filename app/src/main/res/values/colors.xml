@@ -18,4 +18,9 @@
     <!-- Background -->
     <color name="background_color">#F5F5F5</color>
     <color name="black">#000000</color>
+    !-- Badge Colors -->
+    <color name="badge_healthy_bg">#E8F5E9</color>
+    <color name="badge_healthy_text">#2E7D32</color>
+    <color name="badge_risk_bg">#FFEBEE</color>
+    <color name="badge_risk_text">#C62828</color>
 </resources>

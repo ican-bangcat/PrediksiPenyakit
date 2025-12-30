@@ -2,140 +2,222 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC"
-    android:padding="24dp">
+    android:background="#F8F9FA">
 
-    <TextView
-        android:id="@+id/tvHistoryTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="History"
-        android:textColor="#2260FF"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvLabelDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Date Range"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#333333"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvHistoryTitle"/>
-
-    <TextView
-        android:id="@+id/tvReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset"
-        android:textColor="#2260FF"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@id/tvLabelDate"/>
-
+    <!-- Header Section -->
     <LinearLayout
-        android:id="@+id/containerDateInput"
+        android:id="@+id/headerSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/tvLabelDate">
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:background="@android:color/white"
+        android:elevation="2dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Riwayat Prediksi"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#1A237E"
+            android:fontFamily="sans-serif-medium"/>
+
+        <TextView
+            android:id="@+id/tvSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pantau perkembangan kesehatanmu"
+            android:textSize="14sp"
+            android:textColor="#616161"
+            android:layout_marginTop="4dp"/>
+
+        <!-- Filter Chips -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFilter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:singleSelection="true"
+            app:chipSpacingHorizontal="8dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipAll"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Semua"
+                android:checked="true"
+                app:chipBackgroundColor="@color/chip_bg_selector"
+                app:chipStrokeWidth="0dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip7Days"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="7 Hari"
+                app:chipBackgroundColor="@color/chip_bg_selector"
+                app:chipStrokeWidth="0dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMonth"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bulan Ini"
+                app:chipBackgroundColor="@color/chip_bg_selector"
+                app:chipStrokeWidth="0dp"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipPickDate"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pilih Tanggal"
+                app:chipIcon="@drawable/ic_calendar_small"
+                app:chipIconTint="#757575"
+                app:chipBackgroundColor="@color/chip_bg_selector"
+                app:chipStrokeWidth="0dp"/>
+
+        </com.google.android.material.chip.ChipGroup>
+
+    </LinearLayout>
+
+    <!-- Summary Card (visible when there's data) -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardSummary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:visibility="gone"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:cardBackgroundColor="#E3F2FD"
+        app:layout_constraintTop_toBottomOf="@id/headerSection">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginEnd="8dp">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="From" android:textColor="#888888" android:textSize="12sp"/>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:background="@drawable/bg_chip_inactive"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="09-10-2025" android:textStyle="bold"/>
-                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_history" app:tint="#888"/> </LinearLayout>
-        </LinearLayout>
+            android:orientation="horizontal"
+            android:padding="16dp"
+            android:gravity="center_vertical">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="8dp">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="To" android:textColor="#888888" android:textSize="12sp"/>
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_assessment"
+                android:tint="#1976D2"
+                android:contentDescription="Summary Icon"/>
+
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:background="@drawable/bg_chip_inactive"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="12dp">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="09-11-2025" android:textStyle="bold"/>
-                <ImageView android:layout_width="20dp" android:layout_height="20dp" android:src="@drawable/ic_history" app:tint="#888"/>
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Pemeriksaan"
+                    android:textSize="12sp"
+                    android:textColor="#1565C0"/>
+
+                <TextView
+                    android:id="@+id/tvTotalCheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 kali"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#0D47A1"/>
+
             </LinearLayout>
+
         </LinearLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/containerChips"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/containerDateInput">
+    </com.google.android.material.card.MaterialCardView>
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:text="Today"
-            android:textSize="12sp"
-            android:backgroundTint="@android:color/white"
-            android:textColor="#333"
-            style="?attr/materialButtonOutlinedStyle"/>
-
-        <Space android:layout_width="8dp" android:layout_height="wrap_content"/>
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:text="This Week"
-            android:textSize="12sp"
-            android:backgroundTint="@android:color/white"
-            android:textColor="#333"
-            style="?attr/materialButtonOutlinedStyle"/>
-
-        <Space android:layout_width="8dp" android:layout_height="wrap_content"/>
-
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_weight="1"
-            android:text="This Month"
-            android:textSize="12sp"
-            android:backgroundTint="@android:color/white"
-            android:textColor="#333"
-            style="?attr/materialButtonOutlinedStyle"/>
-    </LinearLayout>
-
+    <!-- RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHistory"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="20dp"
-        android:paddingBottom="80dp"
+        android:padding="16dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/containerChips"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/cardSummary"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!-- Empty State -->
+    <LinearLayout
+        android:id="@+id/emptyStateLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:listitem="@layout/item_news"/> </androidx.constraintlayout.widget.ConstraintLayout>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:src="@drawable/ic_empty_history"
+            android:alpha="0.3"
+            android:contentDescription="Empty State"/>
+
+        <TextView
+            android:id="@+id/tvEmptyState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Belum ada riwayat prediksi"
+            android:textSize="16sp"
+            android:textColor="#757575"
+            android:layout_marginTop="16dp"
+            android:textAlignment="center"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mulai lakukan pemeriksaan kesehatan pertamamu"
+            android:textSize="12sp"
+            android:textColor="#9E9E9E"
+            android:layout_marginTop="4dp"
+            android:textAlignment="center"/>
+
+    </LinearLayout>
+
+    <!-- Loading -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="#2196F3"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Background Watermark (Medical Icon) -->
+    <ImageView
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/ic_medical_watermark"
+        android:alpha="0.03"
+        android:scaleType="centerInside"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="-50dp"
+        android:layout_marginBottom="-50dp"
+        android:contentDescription="Background Watermark"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

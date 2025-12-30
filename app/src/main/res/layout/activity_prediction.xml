@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-    <!-- ScrollView untuk konten form -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -21,10 +20,9 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="20dp"
-            android:paddingBottom="32dp"
+            android:paddingBottom="120dp"
             android:background="@android:color/white">
 
-            <!-- Header dengan tombol back -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,7 +39,6 @@
                     app:tint="#757575"/>
             </LinearLayout>
 
-            <!-- Judul -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -51,22 +48,19 @@
                 android:textColor="#1a1a1a"
                 android:layout_marginBottom="8dp"/>
 
-            <!-- Deskripsi -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ayo prediksi apakah kamu mengetahui prediksi kamu"
+                android:text="Lengkapi data kesehatan Anda untuk mendapatkan prediksi risiko."
                 android:textSize="14sp"
                 android:textColor="#666666"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- Form Input -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!-- Tinggi Badan & Berat Badan -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -88,8 +82,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="numberDecimal"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -106,12 +99,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="numberDecimal"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
-                <!-- Umur & Gender -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -133,8 +124,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -151,12 +141,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="none"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
-                <!-- Langkah Harian & Jam Tidur -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -178,8 +166,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -196,12 +183,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="numberDecimal"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
-                <!-- Perokok & Alkohol -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -214,37 +199,27 @@
                         android:layout_weight="1"
                         android:orientation="vertical"
                         android:layout_marginEnd="8dp">
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Perokok"
-                            android:textSize="14sp"
-                            android:textColor="#666666"
-                            android:layout_marginBottom="8dp"/>
-
+                            android:textColor="#666666"/>
                         <RadioGroup
                             android:id="@+id/rgSmoker"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
-
                             <RadioButton
                                 android:id="@+id/rbSmokerYes"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:text="Ya"
-                                android:textColor="#1a1a1a"
                                 android:buttonTint="#2260FF"/>
-
                             <RadioButton
                                 android:id="@+id/rbSmokerNo"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:text="Tidak"
-                                android:textColor="#1a1a1a"
                                 android:buttonTint="#2260FF"/>
                         </RadioGroup>
                     </LinearLayout>
@@ -254,43 +229,32 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Alkohol"
-                            android:textSize="14sp"
-                            android:textColor="#666666"
-                            android:layout_marginBottom="8dp"/>
-
+                            android:textColor="#666666"/>
                         <RadioGroup
                             android:id="@+id/rgAlcohol"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
-
                             <RadioButton
                                 android:id="@+id/rbAlcoholYes"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:text="Ya"
-                                android:textColor="#1a1a1a"
                                 android:buttonTint="#2260FF"/>
-
                             <RadioButton
                                 android:id="@+id/rbAlcoholNo"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:text="Tidak"
-                                android:textColor="#1a1a1a"
                                 android:buttonTint="#2260FF"/>
                         </RadioGroup>
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- Air & Kalori -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -312,8 +276,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="numberDecimal"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -330,12 +293,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
-                <!-- Tekanan Sistolik & Diastolik -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -346,7 +307,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="Tekanan Sistolik"
+                        android:hint="Sistolik"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:boxStrokeColor="#2260FF"
                         app:hintTextColor="#2260FF"
@@ -357,15 +318,14 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="Tekanan Diastolik"
+                        android:hint="Diastolik"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         app:boxStrokeColor="#2260FF"
                         app:hintTextColor="#2260FF">
@@ -375,12 +335,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
-                <!-- Detak Jantung & Riwayat Keluarga -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -402,8 +360,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="number"
-                            android:textColor="#1a1a1a"
-                            android:textSize="16sp"/>
+                            android:textColor="#1a1a1a"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
@@ -411,44 +368,34 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Riwayat Keluarga"
-                            android:textSize="14sp"
-                            android:textColor="#666666"
-                            android:layout_marginBottom="8dp"/>
-
+                            android:textColor="#666666"/>
                         <RadioGroup
                             android:id="@+id/rgFamilyHistory"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal">
-
                             <RadioButton
                                 android:id="@+id/rbFamilyYes"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:text="Ya"
-                                android:textColor="#1a1a1a"
                                 android:buttonTint="#2260FF"/>
-
                             <RadioButton
                                 android:id="@+id/rbFamilyNo"
-                                android:layout_width="0dp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:text="Tidak"
-                                android:textColor="#1a1a1a"
                                 android:buttonTint="#2260FF"/>
                         </RadioGroup>
                     </LinearLayout>
                 </LinearLayout>
+
             </LinearLayout>
 
-            <!-- Tombol Submit -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSubmit"
                 android:layout_width="match_parent"
@@ -463,7 +410,6 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Bottom Navigation -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottomNavContainer"
         android:layout_width="match_parent"
@@ -483,14 +429,11 @@
             app:layout_constraintHorizontal_weight="1">
 
             <ImageView
-                android:id="@+id/imgHome"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_home"
                 app:tint="#757575"/>
-
             <TextView
-                android:id="@+id/textHome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Home"
@@ -509,14 +452,11 @@
             app:layout_constraintHorizontal_weight="1">
 
             <ImageView
-                android:id="@+id/imgNews"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_newspaper"
                 app:tint="#757575"/>
-
             <TextView
-                android:id="@+id/textNews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="News"
@@ -543,14 +483,11 @@
             app:layout_constraintHorizontal_weight="1">
 
             <ImageView
-                android:id="@+id/imgHistory"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_history"
                 app:tint="#757575"/>
-
             <TextView
-                android:id="@+id/textHistory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="History"
@@ -569,14 +506,11 @@
             app:layout_constraintHorizontal_weight="1">
 
             <ImageView
-                android:id="@+id/imgProfileTab"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_person"
                 app:tint="#757575"/>
-
             <TextView
-                android:id="@+id/textProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Profile"
@@ -585,7 +519,6 @@
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- FAB Button Predict (Tetap Aktif/Biru) -->
     <androidx.cardview.widget.CardView
         android:id="@+id/btnFabPredict"
         android:layout_width="60dp"
