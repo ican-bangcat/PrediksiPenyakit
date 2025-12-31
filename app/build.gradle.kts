@@ -50,10 +50,14 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-
+    //Untuk Gambar Artikel
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    // Coil untuk load gambar
+    implementation("io.coil-kt:coil:2.6.0")
+    // Material Design (untuk CoordinatorLayout & CollapsingToolbar)
+    implementation("com.google.android.material:material:1.11.0")
     // CardView untuk card layout
     implementation("androidx.cardview:cardview:1.0.0")
-
     // Optional: Untuk API calls (jika nanti perlu)
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")

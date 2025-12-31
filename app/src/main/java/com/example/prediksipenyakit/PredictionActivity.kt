@@ -128,7 +128,7 @@ class PredictionActivity : AppCompatActivity() {
     }
 
     private fun setupGenderDropdown() {
-        val genders = arrayOf("Male", "Female")
+        val genders = arrayOf("Pria", "Perempuan")
         val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, genders)
         etGender.setAdapter(adapter)
     }
@@ -202,11 +202,11 @@ class PredictionActivity : AppCompatActivity() {
             // --- BAGIAN 1: JALANKAN AI (Formalitas) ---
             try {
                 if (::session.isInitialized) {
-                    val isFemale = if (genderStr.equals("Female", ignoreCase = true)) 1.0f else 0.0f
-                    val isMale = if (genderStr.equals("Male", ignoreCase = true)) 1.0f else 0.0f
+                    val isPerempuan = if (genderStr.equals("Perempuan", ignoreCase = true)) 1.0f else 0.0f
+                    val isPria = if (genderStr.equals("Pria", ignoreCase = true)) 1.0f else 0.0f
 
                     val inputArray = floatArrayOf(
-                        scaleValue(age.toFloat(), 0), isFemale, isMale, scaleValue(bmi, 1),
+                        scaleValue(age.toFloat(), 0), isPerempuan, isPria, scaleValue(bmi, 1),
                         scaleValue(steps.toFloat(), 2), scaleValue(sleep, 3), scaleValue(water, 4),
                         scaleValue(calories.toFloat(), 5), smoker.toFloat(), alcohol.toFloat(),
                         scaleValue(hr.toFloat(), 6), scaleValue(sys.toFloat(), 7),

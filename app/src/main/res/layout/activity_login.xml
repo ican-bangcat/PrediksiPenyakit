@@ -59,7 +59,7 @@
             android:id="@+id/etEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="sophat.leat@nintrea.live"
+            android:hint="contoh@contoh.com"
             android:inputType="textEmailAddress"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -67,7 +67,7 @@
         android:id="@+id/labelPass"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Password"
+        android:text="Kata Sandi"
         android:textColor="@color/primary"
         android:textStyle="bold"
         android:layout_marginTop="16dp"
@@ -92,7 +92,7 @@
             android:id="@+id/etPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Please Enter Your Password"
+            android:hint="Masukkan Kata sandi anda"
             android:inputType="textPassword"/>
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -100,15 +100,16 @@
         android:id="@+id/cbRemember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Remember Me"
+        android:text="Ingat Login"
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tilPass"/>
 
     <TextView
+        android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Forgot Password"
+        android:text="Lupa Sandi"
         android:textStyle="bold"
         android:textColor="@color/risk_high"
         app:layout_constraintEnd_toEndOf="parent"
@@ -139,14 +140,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Don't have an account ? "
+            android:text="Belum ada akun? "
             android:textColor="@color/text_secondary"/>
 
         <TextView
             android:id="@+id/tvGoToSignUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
+            android:text="Daftar Akun"
             android:textStyle="bold"
             android:textColor="@color/primary"/>
     </LinearLayout>

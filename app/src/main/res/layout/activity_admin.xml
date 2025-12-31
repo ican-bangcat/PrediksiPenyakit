@@ -70,7 +70,7 @@
                 android:id="@+id/textNews"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="News"
+                android:text="Berita"
                 android:textSize="12sp"
                 android:textColor="#757575"/>
         </LinearLayout>
@@ -103,7 +103,7 @@
                 android:id="@+id/textHistory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="History"
+                android:text="Histori"
                 android:textSize="12sp"
                 android:textColor="#757575"/>
         </LinearLayout>
@@ -128,7 +128,7 @@
                 android:id="@+id/textProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Profile"
+                android:text="Profil"
                 android:textSize="12sp"
                 android:textColor="#757575"/>
         </LinearLayout>
@@ -150,7 +150,7 @@
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_scan"
+            android:src="@drawable/prediction"
             app:tint="@android:color/white"/>
     </androidx.cardview.widget.CardView>
 

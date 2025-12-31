@@ -6,9 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import coil.load // Pastikan import coil
+import coil.load // Import extension function Coil
 
 class DetailNewsFragment : Fragment() {
 
@@ -28,31 +27,33 @@ class DetailNewsFragment : Fragment() {
         val tvDate: TextView = view.findViewById(R.id.tvDetailDate)
         val tvTitle: TextView = view.findViewById(R.id.tvDetailTitle)
         val tvContent: TextView = view.findViewById(R.id.tvDetailContent)
-
-        // UBAH BAGIAN INI: Cari ImageView btnBack, bukan Toolbar
         val btnBack: ImageView = view.findViewById(R.id.btnBack)
 
-        // 2. Ambil Data (Sama seperti sebelumnya)
+        // 2. Ambil Data dari Arguments (Bundle)
         val title = arguments?.getString("TITLE") ?: ""
         val content = arguments?.getString("CONTENT") ?: ""
         val category = arguments?.getString("CATEGORY") ?: "Umum"
         val date = arguments?.getString("DATE") ?: ""
         val imageUrl = arguments?.getString("IMAGE_URL")
 
-        // 3. Set Data
+        // 3. Set Data ke UI
         tvTitle.text = title
         tvContent.text = content
         tvCategory.text = category.uppercase()
-        tvDate.text = date.take(10)
 
+        // Format tanggal sederhana (ambil 10 karakter pertama: YYYY-MM-DD)
+        tvDate.text = if (date.length >= 10) date.take(10) else date
+
+        // Load Gambar dengan Coil
         if (!imageUrl.isNullOrEmpty()) {
             imgHeader.load(imageUrl) {
-                placeholder(R.drawable.ic_newspaper)
+                crossfade(true)
+                placeholder(R.drawable.ic_newspaper) // Pastikan ada icon ini atau ganti
                 error(R.drawable.ic_newspaper)
             }
         }
 
-        // 4. Tombol Back (Logic Baru)
+        // 4. Tombol Back
         btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }

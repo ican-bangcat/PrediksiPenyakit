@@ -131,7 +131,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="Gender"
+                        android:hint="Jenis Kelamin"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                         app:boxStrokeColor="#2260FF"
                         app:hintTextColor="#2260FF">
@@ -400,7 +400,7 @@
                 android:id="@+id/btnSubmit"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
-                android:text="SUBMIT"
+                android:text="KIRIM"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#FFFFFF"
@@ -459,7 +459,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="News"
+                android:text="Artikel"
                 android:textSize="12sp"
                 android:textColor="#757575"/>
         </LinearLayout>
@@ -490,7 +490,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="History"
+                android:text="Histori"
                 android:textSize="12sp"
                 android:textColor="#757575"/>
         </LinearLayout>
@@ -513,7 +513,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Profile"
+                android:text="Profil"
                 android:textSize="12sp"
                 android:textColor="#757575"/>
         </LinearLayout>

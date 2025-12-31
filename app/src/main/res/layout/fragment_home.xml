@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="#F8FAFC"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -202,7 +202,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Steps"
+                        android:text="Langkah"
                         android:textSize="10sp"
                         android:textColor="#757575"/>
                 </LinearLayout>
@@ -241,7 +241,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Sleep"
+                        android:text="Tidur"
                         android:textSize="10sp"
                         android:textColor="#757575"/>
                 </LinearLayout>
@@ -279,7 +279,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Water"
+                        android:text="Air"
                         android:textSize="10sp"
                         android:textColor="#757575"/>
                 </LinearLayout>

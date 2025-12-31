@@ -57,19 +57,21 @@
             app:layout_constraintStart_toEndOf="@id/btnHome"
             app:layout_constraintEnd_toStartOf="@id/spaceCenter"
             app:layout_constraintHorizontal_weight="1">
+
             <ImageView
                 android:id="@+id/imgNews"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_newspaper"
-                app:tint="#757575"/>
+                app:tint="#757575" />
+
             <TextView
                 android:id="@+id/textNews"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="News"
-                android:textSize="12sp"
-                android:textColor="#757575"/>
+                android:layout_height="16dp"
+                android:text="Berita"
+                android:textColor="#757575"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <View
@@ -99,7 +101,7 @@
                 android:id="@+id/textHistory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="History"
+                android:text="Histori"
                 android:textSize="12sp"
                 android:textColor="#757575"/>
         </LinearLayout>
@@ -123,7 +125,7 @@
                 android:id="@+id/textProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Profile"
+                android:text="Profil"
                 android:textSize="12sp"
                 android:textColor="#757575"/>
         </LinearLayout>
