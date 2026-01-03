@@ -7,22 +7,24 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
+import coil.transform.RoundedCornersTransformation
 
-// PERUBAHAN 1: Tambahkan parameter kedua 'onItemClick' di constructor
 class HomeArticleAdapter(
     private val articleList: List<ArticleModel>,
     private val onItemClick: (ArticleModel) -> Unit
 ) : RecyclerView.Adapter<HomeArticleAdapter.ArticleViewHolder>() {
 
     class ArticleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-//        val imgArticle: ImageView = itemView.findViewById(R.id.imgArticle)
+        // 1. UNCOMMENT: Inisialisasi ImageView
+        // Pastikan ID di layout item_article.xml kamu bernama "imgArticle"
+        val imgArticle: ImageView = itemView.findViewById(R.id.imgArticleThumb)
+
         val tvTitle: TextView = itemView.findViewById(R.id.tvArticleTitle)
         val tvCategory: TextView = itemView.findViewById(R.id.tvArticleCategory)
-//        val tvDate: TextView = itemView.findViewById(R.id.tvArticleDate)
+        // val tvDate: TextView = itemView.findViewById(R.id.tvArticleDate) // Opsional jika mau dipakai
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
-        // Pastikan nama layout item kamu benar (misal: item_article atau item_home_article)
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_article, parent, false)
         return ArticleViewHolder(view)
     }
@@ -33,18 +35,24 @@ class HomeArticleAdapter(
         holder.tvTitle.text = article.title
         holder.tvCategory.text = article.category
 
-        // Format tanggal sederhana
-//        holder.tvDate.text = article.publishedAt?.take(10) ?: "Baru saja"
+        // 2. UNCOMMENT & UPDATE: Load gambar pakai Coil
+        holder.imgArticle.load(article.imageUrl) {
+            // Efek memudar saat gambar muncul (biar halus)
+            crossfade(true)
+            crossfade(500)
 
-        // Load gambar pakai Coil
-//        holder.imgArticle.load(article.imageUrl) {
-//            placeholder(R.drawable.ic_newspaper)
-//            error(R.drawable.ic_newspaper)
-//        }
+            // Membuat sudut gambar melengkung (sesuai desain card)
+            transformations(RoundedCornersTransformation(12f))
 
-        // PERUBAHAN 2: Pasang Listener Klik pada Item
+            // Gambar sementara jika loading atau error
+            // Pastikan kamu punya drawable 'ic_newspaper' atau ganti dengan icon lain
+            placeholder(R.drawable.ic_newspaper)
+            error(R.drawable.ic_newspaper)
+        }
+
+        // 3. Listener Klik
         holder.itemView.setOnClickListener {
-            onItemClick(article) // Panggil fungsi yang dikirim dari HomeFragment
+            onItemClick(article)
         }
     }
 
