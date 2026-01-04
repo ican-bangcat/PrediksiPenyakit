@@ -22,41 +22,45 @@ import kotlinx.coroutines.withContext
 class HomeFragment : Fragment() {
 
     // --- VARIABEL UI ---
+    private lateinit var tvGreeting: TextView
+    private lateinit var btnStartCheck: Button
+
+    // Variabel Statistik
+    private lateinit var tvBMIValue: TextView  // Tambahan untuk BMI
     private lateinit var tvStepsValue: TextView
     private lateinit var tvSleepValue: TextView
     private lateinit var tvWaterValue: TextView
+
     private lateinit var rvArticles: RecyclerView
-    private lateinit var tvGreeting: TextView
-    private lateinit var btnStartCheck: Button
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Pastikan nama layout XML fragment kamu benar (misal: fragment_home)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 1. INISIALISASI VIEW (Sambungkan dengan ID di XML fragment_home)
+        // 1. INISIALISASI VIEW (Sesuai ID di XML fragment_home)
         tvGreeting = view.findViewById(R.id.tvGreeting)
         btnStartCheck = view.findViewById(R.id.btnStartCheck)
 
+        tvBMIValue = view.findViewById(R.id.tvBMIValue) // Init BMI
         tvStepsValue = view.findViewById(R.id.tvStepsValue)
         tvSleepValue = view.findViewById(R.id.tvSleepValue)
         tvWaterValue = view.findViewById(R.id.tvWaterValue)
+
         rvArticles = view.findViewById(R.id.recyclerViewArticles)
 
         // 2. LOAD DATA DARI SUPABASE
         loadUserProfile()          // Nama User
-        loadLastPredictionStats()  // Data Kesehatan Terakhir
+        loadLastPredictionStats()  // Data Kesehatan Terakhir (Steps, Sleep, Water, BMI)
         loadArticles()             // Berita/Artikel
 
-        // 3. EVENT LISTENER TOMBOL CEK KESEHATAN
+        // 3. EVENT LISTENER
         btnStartCheck.setOnClickListener {
-            // Pindah ke Activity Prediksi
             val intent = Intent(requireContext(), PredictionActivity::class.java)
             startActivity(intent)
         }
@@ -84,7 +88,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // --- FUNGSI 2: AMBIL DATA STATISTIK TERAKHIR (Step, Sleep, Water) ---
+    // --- FUNGSI 2: AMBIL DATA STATISTIK TERAKHIR (SUDAH DIPERBAIKI) ---
     private fun loadLastPredictionStats() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -92,34 +96,50 @@ class HomeFragment : Fragment() {
                 val userId = user?.id
 
                 if (userId != null) {
-                    // Query: Ambil data milik user ini, urutkan created_at DESC (terbaru), ambil 1
-                    val result = SupabaseClient.client.from("predictions")
+                    // PERBAIKAN: Ganti "predictions" jadi "prediction_history"
+                    val result = SupabaseClient.client.from("prediction_history")
                         .select {
                             filter { eq("user_id", userId) }
                             order("created_at", Order.DESCENDING)
                             limit(1)
                         }.decodeSingleOrNull<PredictionHistoryModel>()
 
-                    Log.d("HomeFragment", "Data Stats: $result") // Cek di Logcat
-
                     withContext(Dispatchers.Main) {
                         if (result != null) {
-                            // Tampilkan data jika ada
+                            // 1. Set Steps
                             tvStepsValue.text = "${result.dailySteps}"
-                            tvSleepValue.text = "${result.sleepHours}h"
-                            tvWaterValue.text = "${result.waterIntake}L"
+
+                            // 2. Set Sleep
+                            tvSleepValue.text = "${String.format("%.1f", result.sleepHours)}h"
+
+                            // 3. Set Water
+                            tvWaterValue.text = "${String.format("%.1f", result.waterIntake)}L"
+
+                            // 4. Set BMI & Kategori
+                            val bmi = result.bmi
+                            val bmiFormatted = String.format("%.1f", bmi)
+
+                            val category = when {
+                                bmi < 18.5 -> "Kurus"
+                                bmi < 24.9 -> "Normal"
+                                bmi < 29.9 -> "Gemuk"
+                                else -> "Obesitas"
+                            }
+
+                            tvBMIValue.text = "$bmiFormatted ($category)"
+
                         } else {
-                            // Tampilkan strip jika belum pernah cek
+                            // Data Kosong
                             tvStepsValue.text = "-"
                             tvSleepValue.text = "-"
                             tvWaterValue.text = "-"
+                            tvBMIValue.text = "-"
                         }
                     }
                 }
             } catch (e: Exception) {
                 Log.e("HomeFragment", "Error stats: ${e.message}")
                 withContext(Dispatchers.Main) {
-                    // Jika error (misal internet mati), tampilkan "-"
                     tvStepsValue.text = "-"
                 }
             }
@@ -131,34 +151,31 @@ class HomeFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val articles = SupabaseClient.client.from("articles")
-                    .select()
+                    .select {
+                        limit(5) // Batasi ambil 5 artikel saja untuk Home
+                        order("published_at", Order.DESCENDING)
+                    }
                     .decodeList<ArticleModel>()
 
                 withContext(Dispatchers.Main) {
                     if (articles.isNotEmpty()) {
                         setupRecyclerView(articles)
                     } else {
-                        setupRecyclerView(getDummyArticles())
+                        // Opsional: Tampilkan view kosong atau dummy
                     }
                 }
             } catch (e: Exception) {
                 Log.e("HomeFragment", "Gagal ambil artikel: ${e.message}")
-                withContext(Dispatchers.Main) {
-                    setupRecyclerView(getDummyArticles())
-                }
             }
         }
     }
 
-    // --- FUNGSI 4: SETUP RECYCLERVIEW & KLIK ARTIKEL ---
+    // --- FUNGSI 4: SETUP RECYCLERVIEW ---
     private fun setupRecyclerView(data: List<ArticleModel>) {
         val adapter = HomeArticleAdapter(data) { articleClicked ->
 
-            // --- LOGIKA KLIK ARTIKEL ---
-            // 1. Siapkan Fragment Detail
+            // Pindah ke Fragment Detail Berita
             val detailFragment = DetailNewsFragment()
-
-            // 2. Bungkus data ke Bundle
             val bundle = Bundle().apply {
                 putString("TITLE", articleClicked.title)
                 putString("CONTENT", articleClicked.content)
@@ -168,28 +185,17 @@ class HomeFragment : Fragment() {
             }
             detailFragment.arguments = bundle
 
-            // 3. Transaksi Fragment (Ganti Tampilan)
-            // PENTING: Gunakan R.id.fragmentContainer sesuai XML activity_home.xml
             parentFragmentManager.beginTransaction()
                 .setCustomAnimations(
                     android.R.anim.fade_in, android.R.anim.fade_out,
                     android.R.anim.fade_in, android.R.anim.fade_out
                 )
                 .replace(R.id.fragmentContainer, detailFragment)
-                .addToBackStack(null) // Agar bisa tombol back
+                .addToBackStack(null)
                 .commit()
         }
 
         rvArticles.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         rvArticles.adapter = adapter
-    }
-
-    // Data Dummy (Cadangan jika database kosong)
-    private fun getDummyArticles(): List<ArticleModel> {
-        return listOf(
-            ArticleModel(title = "Tips Jantung Sehat", content = "...", category = "Kesehatan"),
-            ArticleModel(title = "Manfaat Jalan Kaki", content = "...", category = "Olahraga"),
-            ArticleModel(title = "Pentingnya Air Putih", content = "...", category = "Nutrisi")
-        )
     }
 }
