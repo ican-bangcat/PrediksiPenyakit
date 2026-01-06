@@ -1,6 +1,7 @@
 package com.example.prediksipenyakit
 
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -41,6 +42,10 @@ class ReportActivity : AppCompatActivity() {
                 • Air: ${it.waterIntake} Liter
             """.trimIndent()
             tvReport.text = report
+        }
+        val btnDone = findViewById<Button>(R.id.btnDone)
+        btnDone.setOnClickListener {
+            finish()
         }
     }
 }
