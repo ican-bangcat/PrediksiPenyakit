@@ -43,7 +43,7 @@ class ResultActivity : AppCompatActivity() {
                 binding.tvStatusTitle.text = "BERISIKO TINGGI"
                 binding.tvStatusTitle.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_dark))
                 binding.cardStatus.setCardBackgroundColor(ContextCompat.getColor(this, R.color.risk_high_bg)) // Pastikan warna ada di colors.xml atau ganti hex code
-                binding.iconStatus.setImageResource(R.drawable.ic_warning) // Pastikan icon ada
+                binding.iconStatus.setImageResource(R.drawable.ic_warning)
                 binding.tvStatusDescription.text = "Waspada! Parameter kesehatan Anda menunjukkan tanda bahaya."
             } else {
                 binding.tvStatusTitle.text = "KONDISI PRIMA"
@@ -53,7 +53,7 @@ class ResultActivity : AppCompatActivity() {
                 binding.tvStatusDescription.text = "Kerja bagus! Tubuh Anda dalam kondisi sehat."
             }
 
-            // --- 2. SETUP REKOMENDASI DOKTER (INI YANG HILANG TADI) ---
+            // 2. SETUP REKOMENDASI DOKTER (INI YANG HILANG TADI)
             val adviceList = generateHealthAdvice(data)
 
             // Setup RecyclerView Rekomendasi Dokter
@@ -61,13 +61,13 @@ class ResultActivity : AppCompatActivity() {
             binding.recyclerAdvice.layoutManager = LinearLayoutManager(this)
             binding.recyclerAdvice.adapter = doctorAdapter
 
-            // --- 3. SETUP ARTIKEL DARI DATABASE ---
+            // 3. SETUP ARTIKEL DARI DATABAS---
             setupArticleRecyclerView()
             fetchArticlesFromSupabase(data)
         }
     }
 
-    // --- LOGIKA REKOMENDASI DOKTER (WAJIB ADA) ---
+    // LOGIKA REKOMENDASI DOKTER (WAJIB ADA)---
     private fun generateHealthAdvice(data: UserInputModel): MutableList<String> {
         val adviceList = mutableListOf<String>()
 
@@ -126,7 +126,7 @@ class ResultActivity : AppCompatActivity() {
         return adviceList
     }
 
-    // --- LOGIKA ARTIKEL REKOMENDASI ---
+    // LOGIKA ARTIKEL REKOMENDASI
     private fun setupArticleRecyclerView() {
         articleAdapter = ResultArticleAdapter(emptyList()) { article ->
             // Saat Artikel Diklik -> Buka Detail

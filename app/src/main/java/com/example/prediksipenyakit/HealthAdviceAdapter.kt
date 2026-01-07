@@ -14,10 +14,9 @@ class HealthAdviceAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(advice: String, position: Int) {
-            // Set Nomor Urut (1, 2, 3...)
+            // Set Nomor Urut
             binding.tvAdviceNumber.text = "${position + 1}"
 
-            // --- PERUBAHAN PENTING DI SINI ---
             // Gunakan Html.fromHtml agar tag <b>...</b> dari ResultActivity terbaca Tebal
             binding.tvAdviceText.text = Html.fromHtml(advice, Html.FROM_HTML_MODE_COMPACT)
         }

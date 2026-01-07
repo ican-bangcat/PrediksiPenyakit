@@ -3,7 +3,6 @@ package com.example.prediksipenyakit
 import android.os.Parcel
 import android.os.Parcelable
 
-// Data class ini berfungsi sebagai "Amplop" untuk mengirim data antar halaman
 data class UserInputModel(
     val age: Int,
     val gender: String,

@@ -44,7 +44,7 @@ class NewsAdapter(
         holder.tvCategory.text = item.category?.uppercase() ?: "UMUM"
         holder.tvDate.text = item.publishedAt?.take(10) ?: "-"
 
-        // --- BAGIAN BARU: LOAD GAMBAR DENGAN COIL ---
+        // BAGIAN BARU: LOAD GAMBAR DENGAN COIL
         // Pastikan import coil.load di bagian atas file
         if (!item.imageUrl.isNullOrEmpty()) {
             holder.imgNews.load(item.imageUrl) {

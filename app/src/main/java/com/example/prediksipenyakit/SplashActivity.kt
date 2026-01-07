@@ -15,23 +15,20 @@ class SplashActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_splash)
 
-        // Pengaturan padding untuk layar penuh (Edge-to-Edge) bawaan project baru
+        // Pengaturan padding untuk layar penuh
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        // --- LOGIKA TIMER 3 DETIK ---
-        // 3000ms = 3 detik
+        // LOGIC TIMER 3 DETIK
         Handler(Looper.getMainLooper()).postDelayed({
 
             // 1. Buat Intent untuk pindah ke MainActivity
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
 
-            // 2. Hapus SplashActivity dari daftar Back Stack
-            // (Agar kalau user tekan tombol Back di menu utama, tidak kembali ke Splash)
             finish()
 
         }, 3000)

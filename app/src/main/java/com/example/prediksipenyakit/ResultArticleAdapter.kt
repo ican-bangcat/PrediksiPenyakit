@@ -15,7 +15,6 @@ class ResultArticleAdapter(
 
     // Menghubungkan ID di XML dengan Variable Kotlin
     inner class ArticleViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        // 👇 ID INI SUDAH SAYA COCOKKAN DENGAN XML KAMU
         val imgCover: ImageView = view.findViewById(R.id.imgArticleThumb)
         val tvCategory: TextView = view.findViewById(R.id.tvArticleCategory)
         val tvTitle: TextView = view.findViewById(R.id.tvArticleTitle)

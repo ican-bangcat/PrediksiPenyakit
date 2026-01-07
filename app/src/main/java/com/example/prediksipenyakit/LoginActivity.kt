@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
             cbRemember.isChecked = true
         }
 
-        // 2. LOGIKA TOMBOL LOGIN
+        // 2. LOGIC TOMBOL LOGIN
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString()
             val password = etPassword.text.toString()
