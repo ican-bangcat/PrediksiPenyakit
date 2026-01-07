@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
 import java.text.SimpleDateFormat
@@ -13,7 +12,8 @@ import java.util.*
 
 class HistoryAdapter(
     private var historyList: List<PredictionHistoryModel>,
-    private val onItemClick: (PredictionHistoryModel) -> Unit
+    private val onItemClick: (PredictionHistoryModel) -> Unit,
+    private val onDeleteClick: (PredictionHistoryModel) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     inner class HistoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -26,6 +26,9 @@ class HistoryAdapter(
         val tvBP: TextView = view.findViewById(R.id.tvBP)
         val tvBMI: TextView = view.findViewById(R.id.tvBMI)
         val tvHeartRate: TextView = view.findViewById(R.id.tvHeartRate)
+
+        // TAMBAHAN: Tombol Hapus (Pastikan ID di XML sudah @id/btnDelete)
+        val btnDelete: ImageView = view.findViewById(R.id.btnDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
@@ -37,21 +40,21 @@ class HistoryAdapter(
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         val item = historyList[position]
 
-        // Format tanggal
+        // --- 1. FORMAT TANGGAL ---
         val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("id", "ID"))
         val formattedDate = try {
             val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
-                .parse(item.createdAt)
+                .parse(item.createdAt ?: "")
             dateFormat.format(date ?: Date())
         } catch (e: Exception) {
-            item.createdAt
+            item.createdAt ?: "-"
         }
 
         holder.tvDate.text = formattedDate
 
-        // Set status berdasarkan prediksi (TANPA PERSENTASE)
+        // --- 2. SET STATUS & WARNA ---
         if (item.predictionResult == 1) {
-            // Berisiko
+            // Kondisi: BERISIKO
             holder.viewIndicator.setBackgroundColor(
                 holder.itemView.context.getColor(android.R.color.holo_red_light)
             )
@@ -67,7 +70,7 @@ class HistoryAdapter(
                 holder.itemView.context.getColor(android.R.color.holo_red_dark)
             )
         } else {
-            // Sehat
+            // Kondisi: SEHAT
             holder.viewIndicator.setBackgroundColor(
                 holder.itemView.context.getColor(android.R.color.holo_green_light)
             )
@@ -84,14 +87,21 @@ class HistoryAdapter(
             )
         }
 
-        // Tampilkan detail kesehatan
+        //  3. TAMPILKAN METRIK KESEHATAN ---
         holder.tvBP.text = "${item.systolicBp}/${item.diastolicBp}"
         holder.tvBMI.text = String.format("%.1f", item.bmi)
         holder.tvHeartRate.text = "${item.heartRate} bpm"
 
-        // Click listener
+        // 4. CLICK LISTENERS ---
+
+        // Klik Kartu -> Buka Detail
         holder.cardHistory.setOnClickListener {
             onItemClick(item)
+        }
+
+        // Klik Sampah -> Hapus Data (TAMBAHAN)
+        holder.btnDelete.setOnClickListener {
+            onDeleteClick(item)
         }
     }
 

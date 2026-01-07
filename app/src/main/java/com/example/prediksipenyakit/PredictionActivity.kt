@@ -199,7 +199,7 @@ class PredictionActivity : AppCompatActivity() {
             val familyHistory = if (rgFamilyHistory.checkedRadioButtonId == R.id.rbFamilyYes) 1 else 0
             val genderStr = etGender.text.toString()
 
-            // --- BAGIAN 1: JALANKAN AI (Formalitas) ---
+            // --- BAGIAN 1: JALANKAN ALGORITMA ONNX
             try {
                 if (::session.isInitialized) {
                     val isPerempuan = if (genderStr.equals("Perempuan", ignoreCase = true)) 1.0f else 0.0f

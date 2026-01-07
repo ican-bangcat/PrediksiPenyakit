@@ -5,9 +5,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PredictionHistoryModel(
+    // id prediction
+    val id: Long? = null,
+
     @SerialName("user_id") val userId: String,
-// TAMBAHAN BARU DI SINI 👇
+
     @SerialName("created_at") val createdAt: String? = null,
+
     // Hasil Prediksi
     @SerialName("prediction_result") val predictionResult: Int,
     @SerialName("risk_score") val riskScore: Float,
