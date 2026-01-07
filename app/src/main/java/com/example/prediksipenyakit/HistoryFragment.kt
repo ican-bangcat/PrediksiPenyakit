@@ -3,6 +3,8 @@ package com.example.prediksipenyakit
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,7 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.chip.Chip
+// Hapus import Chip, kita ganti pakai logic manual
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.query.Order
@@ -37,11 +39,11 @@ class HistoryFragment : Fragment() {
     private lateinit var cardSummary: MaterialCardView
     private lateinit var tvTotalCheck: TextView
 
-    // Chips Filter
-    private lateinit var chipAll: Chip
-    private lateinit var chip7Days: Chip
-    private lateinit var chipMonth: Chip
-    private lateinit var chipPickDate: Chip
+    // UBAH DARI CHIP KE TEXTVIEW (Sesuai XML baru)
+    private lateinit var chipAll: TextView
+    private lateinit var chip7Days: TextView
+    private lateinit var chipMonth: TextView
+    private lateinit var chipPickDate: TextView
 
     private var allHistoryData: List<PredictionHistoryModel> = emptyList()
 
@@ -63,6 +65,7 @@ class HistoryFragment : Fragment() {
         cardSummary = view.findViewById(R.id.cardSummary)
         tvTotalCheck = view.findViewById(R.id.tvTotalCheck)
 
+        // Init TextView Filter
         chipAll = view.findViewById(R.id.chipAll)
         chip7Days = view.findViewById(R.id.chip7Days)
         chipMonth = view.findViewById(R.id.chipMonth)
@@ -83,11 +86,48 @@ class HistoryFragment : Fragment() {
         rvHistory.adapter = adapter
 
         // 3. Setup Logic Lainnya
-        setupFilterChips()
+        setupFilterClickListeners()
         fetchHistory()
     }
 
-    // LOGIKA HAPUS DATA
+    // --- LOGIKA FILTER VISUAL (MANUAL) ---
+    // Karena pakai TextView, kita harus manual ganti warna background & text
+    private fun updateFilterUI(activeChip: TextView) {
+        val allChips = listOf(chipAll, chip7Days, chipMonth, chipPickDate)
+
+        // Reset semua ke tampilan tidak aktif (Abu-abu)
+        allChips.forEach { chip ->
+            chip.setBackgroundResource(R.drawable.bg_chip_inactive)
+            chip.setTextColor(Color.parseColor("#64748B")) // Abu-abu
+            chip.typeface = Typeface.DEFAULT
+        }
+
+        // Set yang diklik jadi aktif (Biru)
+        activeChip.setBackgroundResource(R.drawable.bg_chip_active)
+        activeChip.setTextColor(Color.WHITE)
+        activeChip.typeface = Typeface.DEFAULT_BOLD
+    }
+
+    private fun setupFilterClickListeners() {
+        chipAll.setOnClickListener {
+            updateFilterUI(chipAll)
+            filterData(FilterType.ALL)
+        }
+        chip7Days.setOnClickListener {
+            updateFilterUI(chip7Days)
+            filterData(FilterType.SEVEN_DAYS)
+        }
+        chipMonth.setOnClickListener {
+            updateFilterUI(chipMonth)
+            filterData(FilterType.THIS_MONTH)
+        }
+        chipPickDate.setOnClickListener {
+            updateFilterUI(chipPickDate)
+            showDatePicker()
+        }
+    }
+
+    // ... (LOGIKA HAPUS DATA - TIDAK BERUBAH) ...
     private fun showDeleteConfirmation(item: PredictionHistoryModel) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Hapus Riwayat")
@@ -98,68 +138,39 @@ class HistoryFragment : Fragment() {
         }
         builder.setNegativeButton("Batal", null)
 
-        // Create & Show dulu baru bisa diedit warnanya
         val dialog = builder.create()
         dialog.show()
 
-        // --- CUSTOM WARNA TOMBOL ---
         val btnHapus = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
         val btnBatal = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-
-        // 1. Tombol HAPUS jadi MERAH (Peringatan) 🔴
         btnHapus.setTextColor(requireContext().getColor(android.R.color.holo_red_dark))
-
-        // 2. Tombol BATAL jadi BIRU (Sesuai Tema Project) 🔵
         btnBatal.setTextColor(requireContext().getColor(R.color.primary))
     }
 
     private fun deleteHistoryItem(item: PredictionHistoryModel) {
-        // Tampilkan loading saat proses hapus
         loadingBar.visibility = View.VISIBLE
-
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                // 'id' prediction
                 if (item.id != null) {
                     SupabaseClient.client.from("prediction_history").delete {
-                        filter {
-                            eq("id", item.id) // Hapus berdasarkan ID unik di database
-                        }
+                        filter { eq("id", item.id) }
                     }
-
                     withContext(Dispatchers.Main) {
                         Toast.makeText(context, "Riwayat berhasil dihapus", Toast.LENGTH_SHORT).show()
-                        // Refresh data setelah menghapus agar list update
                         fetchHistory()
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Gagal: ID data tidak ditemukan", Toast.LENGTH_SHORT).show()
-                        loadingBar.visibility = View.GONE
                     }
                 }
             } catch (e: Exception) {
                 Log.e("DELETE_HISTORY", "Error: ${e.message}")
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Gagal menghapus: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Gagal menghapus", Toast.LENGTH_SHORT).show()
                     loadingBar.visibility = View.GONE
                 }
             }
         }
     }
 
-    // LOGIKA FILTER & DATE PICKER
-
-    private fun setupFilterChips() {
-        chipAll.setOnClickListener { filterData(FilterType.ALL) }
-        chip7Days.setOnClickListener { filterData(FilterType.SEVEN_DAYS) }
-        chipMonth.setOnClickListener { filterData(FilterType.THIS_MONTH) }
-
-        chipPickDate.setOnClickListener {
-            showDatePicker()
-        }
-    }
-
+    // ... (DATE PICKER) ...
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -181,7 +192,8 @@ class HistoryFragment : Fragment() {
         )
 
         datePickerDialog.setOnCancelListener {
-            chipAll.isChecked = true
+            // Kalau batal pilih tanggal, kembalikan ke Semua
+            updateFilterUI(chipAll)
             filterData(FilterType.ALL)
             chipPickDate.text = "Pilih Tanggal"
         }
@@ -253,8 +265,8 @@ class HistoryFragment : Fragment() {
         return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).parse(dateString)
     }
 
+    // ... (NAVIGASI KE DETAIL) ...
     private fun bukaDetailHistory(item: PredictionHistoryModel) {
-
         val dataInput = UserInputModel(
             age = item.age,
             gender = item.gender,
@@ -279,8 +291,8 @@ class HistoryFragment : Fragment() {
         startActivity(intent)
     }
 
+    // ... (FETCH DATA) ...
     private fun fetchHistory() {
-        // Tampilkan loading hanya jika list masih kosong
         if (allHistoryData.isEmpty()) {
             loadingBar.visibility = View.VISIBLE
         }
@@ -302,9 +314,9 @@ class HistoryFragment : Fragment() {
                     withContext(Dispatchers.Main) {
                         loadingBar.visibility = View.GONE
                         if (result.isNotEmpty()) {
-                            // Reset ke filter ALL setiap kali fetch baru (misal habis hapus)
+                            // Reset filter visual ke "Semua"
+                            updateFilterUI(chipAll)
                             filterData(FilterType.ALL)
-                            chipAll.isChecked = true // Reset chip visual
 
                             cardSummary.visibility = View.VISIBLE
                             emptyStateLayout.visibility = View.GONE
@@ -314,7 +326,6 @@ class HistoryFragment : Fragment() {
                             tvEmptyState.text = "Belum ada riwayat prediksi"
                             cardSummary.visibility = View.GONE
                             rvHistory.visibility = View.GONE
-                            // Update adapter biar kosong
                             adapter.updateData(emptyList())
                         }
                     }
@@ -336,7 +347,6 @@ class HistoryFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        // Ambil data terbaru setiap kali fragment dibuka kembali
         fetchHistory()
     }
 

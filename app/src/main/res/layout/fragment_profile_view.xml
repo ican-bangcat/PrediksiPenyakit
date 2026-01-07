@@ -1,148 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F8FAFC">
+    android:background="#F8FAFC"
+    android:fillViewport="true">
 
-    <!-- CONTENT -->
-    <ScrollView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:padding="24dp">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Profil Saya"
+            android:textColor="#1E293B"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardProfileImage"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="#E2E8F0"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:id="@+id/imgProfileAvatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/user"
+                android:scaleType="centerCrop"
+                android:padding="0dp"/>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/infoContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="24dp">
+            android:orientation="vertical"
+            android:layout_marginTop="32dp"
+            app:layout_constraintTop_toBottomOf="@id/cardProfileImage">
 
-            <!-- TITLE -->
-            <TextView
-                android:id="@+id/tvTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Profil"
-                android:textColor="#1E293B"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <!-- CARD CONTAINER -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardProfile"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="2dp"
-                app:cardBackgroundColor="@android:color/white"
-                app:layout_constraintTop_toBottomOf="@id/tvTitle">
+                android:hint="Nama Lengkap"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="#E2E8F0"
+                app:hintTextColor="#64748B"
+                app:boxBackgroundColor="@android:color/white"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                android:layout_marginBottom="16dp">
 
-                <LinearLayout
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFullNameView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:text="Memuat..."
+                    android:enabled="false"
+                    android:textColor="#1E293B"
+                    android:textStyle="bold"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- NAMA -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Nama Lengkap"
-                        app:boxStrokeColor="#E2E8F0"
-                        app:hintTextColor="#64748B"
-                        android:layout_marginBottom="16dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etFullNameView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Memuat..."
-                            android:enabled="false"
-                            android:textColor="#1E293B"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- EMAIL -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Email"
-                        app:boxStrokeColor="#E2E8F0"
-                        app:hintTextColor="#64748B"
-                        android:layout_marginBottom="16dp">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etEmailView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="Memuat..."
-                            android:enabled="false"
-                            android:textColor="#1E293B"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <!-- PASSWORD -->
-                    <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="Password"
-                        app:boxStrokeColor="#E2E8F0"
-                        app:hintTextColor="#64748B">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/etPasswordView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="********"
-                            android:inputType="textPassword"
-                            android:enabled="false"
-                            android:textColor="#1E293B"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- BUTTON EDIT -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnEditProfile"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="24dp"
-                android:text="Edit Profil"
-                android:textStyle="bold"
-                app:cornerRadius="12dp"
-                app:backgroundTint="#2260FF"
-                app:layout_constraintTop_toBottomOf="@id/cardProfile"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:layout_height="wrap_content"
+                android:hint="Email"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="#E2E8F0"
+                app:hintTextColor="#64748B"
+                app:boxBackgroundColor="@android:color/white"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                android:layout_marginBottom="16dp">
 
-            <!-- BUTTON LOGOUT -->
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogout"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etEmailView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Memuat..."
+                    android:enabled="false"
+                    android:textColor="#1E293B"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginTop="16dp"
-                android:text="Keluar (Logout)"
-                android:textColor="#FF3B30"
-                app:strokeColor="#FF3B30"
-                app:cornerRadius="12dp"
-                app:layout_constraintTop_toBottomOf="@id/btnEditProfile"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                android:layout_height="wrap_content"
+                android:hint="Password"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                app:boxStrokeColor="#E2E8F0"
+                app:hintTextColor="#64748B"
+                app:boxBackgroundColor="@android:color/white"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                android:layout_marginBottom="24dp">
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPasswordView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="********"
+                    android:inputType="textPassword"
+                    android:enabled="false"
+                    android:textColor="#1E293B"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- LOADING OVERLAY -->
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:visibility="gone"
-        android:layout_gravity="center"/>
+        </LinearLayout>
 
-</FrameLayout>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditProfile"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Edit Profil"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#2260FF"
+            app:layout_constraintTop_toBottomOf="@id/infoContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="16dp"
+            android:text="Keluar (Logout)"
+            android:textColor="#FF3B30"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            app:strokeColor="#FF3B30"
+            app:cornerRadius="12dp"
+            app:layout_constraintTop_toBottomOf="@id/btnEditProfile"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

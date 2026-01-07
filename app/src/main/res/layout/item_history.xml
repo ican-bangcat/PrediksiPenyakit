@@ -5,6 +5,7 @@
     android:id="@+id/cardHistory"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="24dp"
     android:layout_marginBottom="12dp"
     app:cardCornerRadius="16dp"
     app:cardElevation="3dp"
@@ -15,7 +16,6 @@
         android:layout_height="wrap_content"
         android:padding="18dp">
 
-        <!-- Status Indicator Bar -->
         <View
             android:id="@+id/viewIndicator"
             android:layout_width="5dp"
@@ -25,7 +25,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
-        <!-- Status Badge -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/badgeStatus"
             android:layout_width="wrap_content"
@@ -50,7 +49,6 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Date & Time -->
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="wrap_content"
@@ -63,7 +61,6 @@
             app:layout_constraintStart_toEndOf="@id/viewIndicator"
             app:layout_constraintTop_toBottomOf="@id/badgeStatus"/>
 
-        <!-- Main Status Text -->
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="0dp"
@@ -79,7 +76,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDate"/>
 
-        <!-- Divider -->
         <View
             android:id="@+id/divider"
             android:layout_width="0dp"
@@ -91,7 +87,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvStatus"/>
 
-        <!-- Health Metrics Container -->
         <LinearLayout
             android:id="@+id/metricsContainer"
             android:layout_width="0dp"
@@ -104,7 +99,6 @@
             app:layout_constraintEnd_toStartOf="@id/ivArrow"
             app:layout_constraintTop_toBottomOf="@id/divider">
 
-            <!-- Blood Pressure -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -117,7 +111,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_blood_pressure"
-                    android:tint="#E91E63"
+                    app:tint="#E91E63"
                     android:contentDescription="Blood Pressure"/>
 
                 <TextView
@@ -140,14 +134,12 @@
 
             </LinearLayout>
 
-            <!-- Divider -->
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="#E0E0E0"
                 android:layout_marginHorizontal="6dp"/>
 
-            <!-- BMI -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -160,7 +152,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_bmi"
-                    android:tint="#FF9800"
+                    app:tint="#FF9800"
                     android:contentDescription="BMI"/>
 
                 <TextView
@@ -183,14 +175,12 @@
 
             </LinearLayout>
 
-            <!-- Divider -->
             <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:background="#E0E0E0"
                 android:layout_marginHorizontal="6dp"/>
 
-            <!-- Heart Rate -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -203,7 +193,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:src="@drawable/ic_heart_rate"
-                    android:tint="#F44336"
+                    app:tint="#F44336"
                     android:contentDescription="Heart Rate"/>
 
                 <TextView
@@ -228,14 +218,13 @@
 
         </LinearLayout>
 
-        <!-- View Details Arrow -->
         <ImageView
             android:id="@+id/ivArrow"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:contentDescription="View Details"
             android:src="@drawable/ic_chevron_right"
-            android:tint="#BDBDBD"
+            app:tint="#BDBDBD"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
