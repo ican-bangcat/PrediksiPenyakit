@@ -2,17 +2,17 @@ package com.example.prediksipenyakit
 
 import android.content.Intent
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 
 class HomeActivity : AppCompatActivity() {
 
-    // Deklarasi variabel komponen UI agar bisa diakses global di kelas ini
+    // Deklarasi variabel komponen UI
     private lateinit var imgHome: ImageView
     private lateinit var textHome: TextView
     private lateinit var imgNews: ImageView
@@ -26,14 +26,14 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        // 1. Inisialisasi Komponen View (Icon & Text)
+        // 1. Inisialisasi Komponen View
         imgHome = findViewById(R.id.imgHome)
         textHome = findViewById(R.id.textHome)
         imgNews = findViewById(R.id.imgNews)
         textNews = findViewById(R.id.textNews)
         imgHistory = findViewById(R.id.imgHistory)
         textHistory = findViewById(R.id.textHistory)
-        imgProfile = findViewById(R.id.imgProfileTab)
+        imgProfile = findViewById(R.id.imgProfileTab) // ID icon profile di Tab Bawah
         textProfile = findViewById(R.id.textProfile)
 
         // Inisialisasi Tombol Container
@@ -44,28 +44,28 @@ class HomeActivity : AppCompatActivity() {
         val btnPredict = findViewById<CardView>(R.id.btnFabPredict)
 
         // 2. Set Default: Load Home & Warnai Home jadi Biru
-        loadFragment(HomeFragment())
-        updateTabUI("home")
+        if (savedInstanceState == null) {
+            loadFragment(HomeFragment())
+            updateTabUI("home")
+        }
 
-        // 3. Listener Klik
+        // 3. Listener Klik Tab Bawah
         btnHome.setOnClickListener {
             loadFragment(HomeFragment())
-            updateTabUI("home") // Ubah warna jadi biru
+            updateTabUI("home")
         }
 
         btnNews.setOnClickListener {
-            loadFragment(NewsFragment())
-            updateTabUI("news") // Ubah warna jadi biru
+            bukaTabBerita() // Panggil fungsi helper biar konsisten
         }
 
         btnHistory.setOnClickListener {
             loadFragment(HistoryFragment())
-            updateTabUI("history") // Ubah warna jadi biru
+            updateTabUI("history")
         }
 
         btnProfile.setOnClickListener {
-            loadFragment(ProfileFragment())
-            updateTabUI("profile") // Agar icon profile jadi biru
+            bukaTabProfil() // Panggil fungsi helper biar konsisten
         }
 
         btnPredict.setOnClickListener {
@@ -74,13 +74,26 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    // --- FUNGSI PUBLIC (BISA DIPANGGIL DARI FRAGMENT) ---
+
+    fun bukaTabBerita() {
+        loadFragment(NewsFragment())
+        updateTabUI("news")
+    }
+
+    fun bukaTabProfil() {
+        loadFragment(ProfileFragment())
+        updateTabUI("profile")
+    }
+
+    // --- FUNGSI PRIVATE (LOGIKA INTERNAL) ---
+
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
     }
 
-    // --- LOGIKA GANTI WARNA ICON ---
     private fun updateTabUI(activeTab: String) {
         // Warna Biru (Active) dan Abu-abu (Inactive)
         val colorActive = Color.parseColor("#2196F3")

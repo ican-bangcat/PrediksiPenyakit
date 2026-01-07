@@ -5,130 +5,167 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#F5F5F5"> <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:background="#F5F5F5">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="24dp">
-
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_arrow_back"
-            app:tint="#1a1a1a"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Back"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Hasil Prediksi"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#1a1a1a"
-            android:gravity="center"/>
-
-        <View android:layout_width="32dp" android:layout_height="32dp"/>
-    </LinearLayout>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
-        android:layout_marginBottom="24dp">
+        android:orientation="vertical"
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:gravity="center">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
 
             <ImageView
-                android:id="@+id/iconStatus"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@drawable/ic_check_circle"
-                android:contentDescription="Status Icon"/>
+                android:id="@+id/btnBack"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_arrow_back"
+                app:tint="#1a1a1a"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Back"/>
 
             <TextView
-                android:id="@+id/tvStatusTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Sehat"
-                android:textSize="24sp"
+                android:layout_weight="1"
+                android:text="Hasil Prediksi"
+                android:textSize="20sp"
                 android:textStyle="bold"
-                android:layout_marginTop="16dp"
-                android:textColor="#4CAF50"/>
+                android:textColor="#1a1a1a"
+                android:gravity="center"/>
+
+            <View android:layout_width="32dp" android:layout_height="32dp"/>
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="24dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp"
+                android:gravity="center">
+
+                <ImageView
+                    android:id="@+id/iconStatus"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/ic_check_circle"
+                    android:contentDescription="Status Icon"/>
+
+                <TextView
+                    android:id="@+id/tvStatusTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sehat"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp"
+                    android:textColor="#4CAF50"/>
+
+                <TextView
+                    android:id="@+id/tvStatusDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kondisi tubuh Anda optimal. Pertahankan pola hidup ini!"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:textAlignment="center"
+                    android:textColor="#757575"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/tvAdviceTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rekomendasi Dokter"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#1a1a1a"
+            android:layout_marginBottom="12dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerAdvice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="24dp"
+            tools:listitem="@layout/item_health_advice"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp">
 
             <TextView
-                android:id="@+id/tvStatusDescription"
+                android:id="@+id/tvArticleTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Kondisi tubuh Anda optimal. Pertahankan pola hidup ini!"
+                android:text="Artikel Pilihan Untukmu"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="#212121"/>
+
+            <TextView
+                android:id="@+id/tvSeeAll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Lihat Semua"
                 android:textSize="14sp"
-                android:layout_marginTop="8dp"
-                android:textAlignment="center"
-                android:textColor="#757575"/>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
+                android:textColor="#2260FF"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"/>
+        </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tvAdviceTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Rekomendasi Dokter"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="#1a1a1a"
-        android:layout_marginBottom="12dp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewArticles"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:clipToPadding="false"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_article"
+            android:layout_marginBottom="24dp"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerAdvice"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="false"
-        android:layout_marginBottom="24dp"
-        tools:listitem="@layout/item_health_advice"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewReport"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="📄 Lihat Detail Laporan Data"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#2260FF"
+            app:strokeColor="#2260FF"
+            app:strokeWidth="2dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#FFFFFF"
+            android:layout_marginBottom="12dp"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnViewReport"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="📄 Lihat Detail Laporan Data"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:textColor="#2260FF"
-        app:strokeColor="#2260FF"
-        app:strokeWidth="2dp"
-        app:cornerRadius="12dp"
-        app:backgroundTint="#FFFFFF"
-        android:layout_marginBottom="12dp"/>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCheckAgain"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Cek Ulang"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            app:cornerRadius="12dp"
+            app:backgroundTint="#2260FF"
+            android:layout_marginBottom="16dp"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnCheckAgain"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:text="Cek Ulang"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:textColor="#FFFFFF"
-        app:cornerRadius="12dp"
-        app:backgroundTint="#2260FF"
-        android:layout_marginBottom="16dp"/>
-
-</LinearLayout>
+    </LinearLayout>
 </ScrollView>

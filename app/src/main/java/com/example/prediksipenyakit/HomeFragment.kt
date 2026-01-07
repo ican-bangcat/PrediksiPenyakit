@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -25,8 +26,12 @@ class HomeFragment : Fragment() {
     private lateinit var tvGreeting: TextView
     private lateinit var btnStartCheck: Button
 
+    // Variabel Navigasi (Tombol di dalam Fragment)
+    private lateinit var imgProfileTop: ImageView
+    private lateinit var tvSeeAll: TextView
+
     // Variabel Statistik
-    private lateinit var tvBMIValue: TextView  // Tambahan untuk BMI
+    private lateinit var tvBMIValue: TextView
     private lateinit var tvStepsValue: TextView
     private lateinit var tvSleepValue: TextView
     private lateinit var tvWaterValue: TextView
@@ -47,7 +52,11 @@ class HomeFragment : Fragment() {
         tvGreeting = view.findViewById(R.id.tvGreeting)
         btnStartCheck = view.findViewById(R.id.btnStartCheck)
 
-        tvBMIValue = view.findViewById(R.id.tvBMIValue) // Init BMI
+        // Init Tombol Navigasi
+        imgProfileTop = view.findViewById(R.id.imgProfile) // Foto profil di pojok atas
+        tvSeeAll = view.findViewById(R.id.tvSeeAll)         // Teks "Lihat Semua"
+
+        tvBMIValue = view.findViewById(R.id.tvBMIValue)
         tvStepsValue = view.findViewById(R.id.tvStepsValue)
         tvSleepValue = view.findViewById(R.id.tvSleepValue)
         tvWaterValue = view.findViewById(R.id.tvWaterValue)
@@ -55,14 +64,30 @@ class HomeFragment : Fragment() {
         rvArticles = view.findViewById(R.id.recyclerViewArticles)
 
         // 2. LOAD DATA DARI SUPABASE
-        loadUserProfile()          // Nama User
-        loadLastPredictionStats()  // Data Kesehatan Terakhir (Steps, Sleep, Water, BMI)
-        loadArticles()             // Berita/Artikel
+        loadUserProfile()
+        loadLastPredictionStats()
+        loadArticles()
 
         // 3. EVENT LISTENER
+
+        // A. Klik Tombol "Mulai Cek"
         btnStartCheck.setOnClickListener {
             val intent = Intent(requireContext(), PredictionActivity::class.java)
             startActivity(intent)
+        }
+
+        // B. Klik Foto Profil (Atas) -> Pindah ke Tab Profil (Bawah)
+        imgProfileTop.setOnClickListener {
+            if (activity is HomeActivity) {
+                (activity as HomeActivity).bukaTabProfil()
+            }
+        }
+
+        // C. Klik "Lihat Semua" -> Pindah ke Tab Berita (Bawah)
+        tvSeeAll.setOnClickListener {
+            if (activity is HomeActivity) {
+                (activity as HomeActivity).bukaTabBerita()
+            }
         }
     }
 
@@ -88,7 +113,7 @@ class HomeFragment : Fragment() {
         }
     }
 
-    // --- FUNGSI 2: AMBIL DATA STATISTIK TERAKHIR (SUDAH DIPERBAIKI) ---
+    // --- FUNGSI 2: AMBIL DATA STATISTIK TERAKHIR ---
     private fun loadLastPredictionStats() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -96,7 +121,6 @@ class HomeFragment : Fragment() {
                 val userId = user?.id
 
                 if (userId != null) {
-                    // PERBAIKAN: Ganti "predictions" jadi "prediction_history"
                     val result = SupabaseClient.client.from("prediction_history")
                         .select {
                             filter { eq("user_id", userId) }
@@ -106,30 +130,20 @@ class HomeFragment : Fragment() {
 
                     withContext(Dispatchers.Main) {
                         if (result != null) {
-                            // 1. Set Steps
                             tvStepsValue.text = "${result.dailySteps}"
-
-                            // 2. Set Sleep
                             tvSleepValue.text = "${String.format("%.1f", result.sleepHours)}h"
-
-                            // 3. Set Water
                             tvWaterValue.text = "${String.format("%.1f", result.waterIntake)}L"
 
-                            // 4. Set BMI & Kategori
                             val bmi = result.bmi
                             val bmiFormatted = String.format("%.1f", bmi)
-
                             val category = when {
                                 bmi < 18.5 -> "Kurus"
                                 bmi < 24.9 -> "Normal"
                                 bmi < 29.9 -> "Gemuk"
                                 else -> "Obesitas"
                             }
-
                             tvBMIValue.text = "$bmiFormatted ($category)"
-
                         } else {
-                            // Data Kosong
                             tvStepsValue.text = "-"
                             tvSleepValue.text = "-"
                             tvWaterValue.text = "-"
@@ -152,7 +166,7 @@ class HomeFragment : Fragment() {
             try {
                 val articles = SupabaseClient.client.from("articles")
                     .select {
-                        limit(5) // Batasi ambil 5 artikel saja untuk Home
+                        limit(5)
                         order("published_at", Order.DESCENDING)
                     }
                     .decodeList<ArticleModel>()
@@ -160,8 +174,6 @@ class HomeFragment : Fragment() {
                 withContext(Dispatchers.Main) {
                     if (articles.isNotEmpty()) {
                         setupRecyclerView(articles)
-                    } else {
-                        // Opsional: Tampilkan view kosong atau dummy
                     }
                 }
             } catch (e: Exception) {
@@ -173,8 +185,7 @@ class HomeFragment : Fragment() {
     // --- FUNGSI 4: SETUP RECYCLERVIEW ---
     private fun setupRecyclerView(data: List<ArticleModel>) {
         val adapter = HomeArticleAdapter(data) { articleClicked ->
-
-            // Pindah ke Fragment Detail Berita
+            // Saat Artikel diklik -> Buka Detail News
             val detailFragment = DetailNewsFragment()
             val bundle = Bundle().apply {
                 putString("TITLE", articleClicked.title)

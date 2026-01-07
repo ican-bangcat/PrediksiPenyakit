@@ -38,6 +38,8 @@
         <activity
             android:name=".ProfileActivity"
             android:exported="false" />
+        <activity android:name=".NewsDetailHostActivity"
+            android:exported="false" />
         <activity
             android:name=".SplashActivity"
             android:exported="true">
