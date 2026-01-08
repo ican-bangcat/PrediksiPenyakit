@@ -15,13 +15,12 @@ class HomeArticleAdapter(
 ) : RecyclerView.Adapter<HomeArticleAdapter.ArticleViewHolder>() {
 
     class ArticleViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // 1. UNCOMMENT: Inisialisasi ImageView
-        // Pastikan ID di layout item_article.xml kamu bernama "imgArticle"
+        // 1. Inisialisasi ImageView
         val imgArticle: ImageView = itemView.findViewById(R.id.imgArticleThumb)
 
         val tvTitle: TextView = itemView.findViewById(R.id.tvArticleTitle)
         val tvCategory: TextView = itemView.findViewById(R.id.tvArticleCategory)
-        // val tvDate: TextView = itemView.findViewById(R.id.tvArticleDate) // Opsional jika mau dipakai
+        // val tvDate: TextView = itemView.findViewById(R.id.tvArticleDate) // Opsional
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArticleViewHolder {
@@ -37,15 +36,14 @@ class HomeArticleAdapter(
 
         // 2. UNCOMMENT & UPDATE: Load gambar pakai Coil
         holder.imgArticle.load(article.imageUrl) {
-            // Efek memudar saat gambar muncul (biar halus)
+            // Efek memudar saat gambar muncul
             crossfade(true)
             crossfade(500)
 
-            // Membuat sudut gambar melengkung (sesuai desain card)
+            // Membuat sudut gambar melengkung
             transformations(RoundedCornersTransformation(12f))
 
             // Gambar sementara jika loading atau error
-            // Pastikan kamu punya drawable 'ic_newspaper' atau ganti dengan icon lain
             placeholder(R.drawable.ic_newspaper)
             error(R.drawable.ic_newspaper)
         }

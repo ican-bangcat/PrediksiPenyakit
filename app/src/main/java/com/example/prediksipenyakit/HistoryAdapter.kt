@@ -40,7 +40,7 @@ class HistoryAdapter(
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         val item = historyList[position]
 
-        // --- 1. FORMAT TANGGAL ---
+        // 1. FORMAT TANGGAL
         val dateFormat = SimpleDateFormat("dd MMM yyyy, HH:mm", Locale("id", "ID"))
         val formattedDate = try {
             val date = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US)
@@ -52,7 +52,7 @@ class HistoryAdapter(
 
         holder.tvDate.text = formattedDate
 
-        // --- 2. SET STATUS & WARNA ---
+        // 2. SET STATUS & WARNA
         if (item.predictionResult == 1) {
             // Kondisi: BERISIKO
             holder.viewIndicator.setBackgroundColor(
@@ -87,19 +87,19 @@ class HistoryAdapter(
             )
         }
 
-        //  3. TAMPILKAN METRIK KESEHATAN ---
+        //  3. TAMPILKAN METRIK KESEHATAN
         holder.tvBP.text = "${item.systolicBp}/${item.diastolicBp}"
         holder.tvBMI.text = String.format("%.1f", item.bmi)
         holder.tvHeartRate.text = "${item.heartRate} bpm"
 
-        // 4. CLICK LISTENERS ---
+        // 4. CLICK LISTENERS
 
         // Klik Kartu -> Buka Detail
         holder.cardHistory.setOnClickListener {
             onItemClick(item)
         }
 
-        // Klik Sampah -> Hapus Data (TAMBAHAN)
+        // Klik Sampah -> Hapus Data
         holder.btnDelete.setOnClickListener {
             onDeleteClick(item)
         }

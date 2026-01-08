@@ -39,7 +39,7 @@ class HistoryFragment : Fragment() {
     private lateinit var cardSummary: MaterialCardView
     private lateinit var tvTotalCheck: TextView
 
-    // UBAH DARI CHIP KE TEXTVIEW (Sesuai XML baru)
+    // UBAH DARI CHIP KE TEXTVIEW
     private lateinit var chipAll: TextView
     private lateinit var chip7Days: TextView
     private lateinit var chipMonth: TextView
@@ -90,7 +90,7 @@ class HistoryFragment : Fragment() {
         fetchHistory()
     }
 
-    // --- LOGIKA FILTER VISUAL (MANUAL) ---
+    // LOGIKA FILTER VISUAL
     // Karena pakai TextView, kita harus manual ganti warna background & text
     private fun updateFilterUI(activeChip: TextView) {
         val allChips = listOf(chipAll, chip7Days, chipMonth, chipPickDate)
@@ -127,7 +127,7 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    // ... (LOGIKA HAPUS DATA - TIDAK BERUBAH) ...
+    // (LOGIKA HAPUS DATA - TIDAK BERUBAH)
     private fun showDeleteConfirmation(item: PredictionHistoryModel) {
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle("Hapus Riwayat")
@@ -170,7 +170,7 @@ class HistoryFragment : Fragment() {
         }
     }
 
-    // ... (DATE PICKER) ...
+    // DATE PICKER
     private fun showDatePicker() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -265,7 +265,7 @@ class HistoryFragment : Fragment() {
         return SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US).parse(dateString)
     }
 
-    // ... (NAVIGASI KE DETAIL) ...
+    // (NAVIGASI KE DETAIL)
     private fun bukaDetailHistory(item: PredictionHistoryModel) {
         val dataInput = UserInputModel(
             age = item.age,
@@ -291,7 +291,7 @@ class HistoryFragment : Fragment() {
         startActivity(intent)
     }
 
-    // ... (FETCH DATA) ...
+    // FETCH DATA
     private fun fetchHistory() {
         if (allHistoryData.isEmpty()) {
             loadingBar.visibility = View.VISIBLE

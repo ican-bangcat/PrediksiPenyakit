@@ -134,7 +134,7 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    // --- Data Class untuk Parsing JSON Supabase ---
+    // Data Class untuk Parsing JSON Supabase
     @kotlin.OptIn(kotlinx.serialization.InternalSerializationApi::class) // <--- TAMBAHKAN BARIS INI
     @kotlinx.serialization.Serializable
     data class UserProfileData(

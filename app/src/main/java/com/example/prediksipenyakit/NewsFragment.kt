@@ -32,7 +32,7 @@ class NewsFragment : Fragment() {
     private lateinit var etSearch: EditText
     private lateinit var fabAddNews: FloatingActionButton
 
-    // --- UPDATE: Variabel Chips Sesuai XML Baru ---
+    // UPDATE: Variabel Chips Sesuai XML Baru
     private lateinit var chipSemua: TextView
     private lateinit var chipJantung: TextView
     private lateinit var chipNutrisi: TextView
@@ -87,7 +87,7 @@ class NewsFragment : Fragment() {
         }
     }
 
-    // --- UPDATE: Logika Filter Kategori Baru ---
+    //UPDATE: Logika Filter Kategori Baru
     private fun setupChipListeners() {
         // Masukkan semua chip ke dalam list agar mudah diatur warnanya
         val chips = listOf(chipSemua, chipJantung, chipNutrisi, chipFisik, chipTidur, chipUmum)

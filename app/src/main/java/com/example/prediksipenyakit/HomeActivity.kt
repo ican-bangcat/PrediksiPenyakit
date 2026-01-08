@@ -86,7 +86,7 @@ class HomeActivity : AppCompatActivity() {
         updateTabUI("profile")
     }
 
-    // --- FUNGSI PRIVATE (LOGIKA INTERNAL) ---
+    // FUNGSI PRIVATE (LOGIKA INTERNAL)
 
     private fun loadFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
